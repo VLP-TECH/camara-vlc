@@ -1,0 +1,559 @@
+Dimensión;Subdimensión;Indicador;OK/KO;DIMENSIONES;Descripción;Formula de cálculo;Datos;Origen indicador;Importancia;Periocidad;Fuente;Bibliografía;
+Apoyo al emprendimiento e innovacción;Acceso a financiación;Volumen de inversión privada en startups tecnológicas;;;Refleja el total de fondos aportados por inversores privados (business angels, fondos de capital riesgo, etc.) a empresas emergentes centradas en la innovación tecnológica.;Suma total (en €) de la inversión privada anual en startups tecnológicas registradas en la región;•Volumen de inversión privada en startups tecnológicas;EIDES;Alta;;https://elreferente.es/ecosistema-startup/;https://www.orkestra.deusto.es/euskadi-economia-digital/2017/integracion-tecnologia-comercio-electronico.phtml;Datos Eurostat: https://ec.europa.eu/eurostat/databrowser/explore/all/science?lang=en&subtheme=isoc.isoc_e.isoc_ci&display=list&sort=category&extractionId=ISOC_CI_IT_EN2
+Apoyo al emprendimiento e innovacción;Acceso a financiación;Acceso a financiación digital;;;Nº de empresas que acceden a fondos públicos/privados específicos para digitalización;% de startups que accedieron a fondos públicos o privados destinados a digitalización;"•Nº de startups que accedieron a fondos para digitalización
+•Nº total de startups ";EIDES;Media;;;Barómetro de la economía digital AMETIC 2021;Datos Desi: https://digital-decade-desi.digital-strategy.ec.europa.eu/datasets/key-indicators/indicators
+Apoyo al emprendimiento e innovacción;Acceso a financiación;Volumen de inversión de capital riesgo en empresas digitales;;;Inversión privada mediante capital riesgo dirigida a empresas digitales, incluyendo etapas de semilla y crecimiento.;Total de operaciones de capital riesgo en empresas tecnológicas en un año (en €);•Importe total invertido en capital riesgo en empresas digitales;EIDES;Baja;;;https://european-digital-innovation-hubs.ec.europa.eu/es/open-dma;
+Apoyo al emprendimiento e innovacción;Dinamismo emprendedor;Densidad de startups;;;Número de startups por población activa o tejido empresarial;Número de startups tecnológicas por cada 1.000 empresas activas en la región;"•Nº de startups tecnológicas
+•Nº de empresas activas en la región";EIDES;Media;;https://elreferente.es/ecosistema-startup/;;
+Apoyo al emprendimiento e innovacción;Dinamismo emprendedor;Tasa de supervivencia de startups a 3 y 5 años;;;Porcentaje de startups que continúan activas a los tres y cinco años desde su creación.;% de startups creadas hace 3 o 5 años que siguen activas actualmente;"•Nº de startups creadas hace 3 años que siguen activas
+•Nº total de startups creadas hace 3 años
+•Nº de startups creadas hace 5 años que siguen activas
+•Nº total de startups creadas hace 5 años";EIDES;Baja;;https://elreferente.es/ecosistema-startup/;;
+Apoyo al emprendimiento e innovacción;Dinamismo emprendedor;Número de startups digitales creadas por año;;;Cantidad de nuevas empresas de base tecnológica registradas anualmente que desarrollan productos o servicios digitales.;Conteo total de nuevas startups tecnológicas registradas durante el año en la región;•Nº de nuevas startups tecnológicas creadas ;EIDES;Media;;https://elreferente.es/ecosistema-startup/;;
+Apoyo al emprendimiento e innovacción;Dinamismo emprendedor;European Index of Digital Entrepreneurship Systems (EIDES);;;Analiza las condiciones marco que favorecen o dificultan la creación y el crecimiento de startups digitales en los países de la Unión Europea.;Composición compleja;;Centro Común de Investigación (JRC);EXTRAIDO;;No necesita;;
+Apoyo al emprendimiento e innovacción;Infraestructura de apoyo;Nº de hubs tecnológicos y aceleradoras de startups activas;;;Contabiliza las infraestructuras y plataformas que ofrecen apoyo técnico, empresarial y financiero a startups en fase de crecimiento o consolidación;Recuento total de entidades activas identificadas como hubs o aceleradoras tecnológicas en la región;"•Nº total de hubs tecnológicos
+•Nº total de aceleradoras de startups";EIDES;Media;;https://elreferente.es/ecosistema-startup/;;
+Apoyo al emprendimiento e innovacción;Infraestructura de apoyo;Presencia de ecosistemas de emprendimiento e innovación en el territorio;;;Evalúa la existencia y madurez de entornos que favorecen el emprendimiento digital, como parques tecnológicos, incubadoras, espacios de coworking y redes de mentores.;Recuento de entornos reconocidos como parques científicos, clústeres, incubadoras o digital innovation hubs activos en la región;•Nº total de entornos reconocidos como parques científicos, clústeres, incubadoras o hubs activos en la región;EIDES;Media;;;;
+Apoyo al emprendimiento e innovacción;Políticas públicas de fomento;Programas públicos de apoyo a la digitalización;;;Nº  y características de las iniciativas gubernamentales destinadas a impulsar la adopción de tecnologías digitales en empresas, pymes y sectores estratégicos.;Número de programas públicos activos en el año orientados al fomento de la digitalización empresarial;•Nº de programas públicos activos en el año para fomentar la digitalización;EIDES;Alta;;;Informe Global Entrepreneurship Monitor – GEM España;
+Apoyo al emprendimiento e innovacción;Políticas públicas de fomento;Inversión pública en programas de digitalización;;; Representa los recursos económicos destinados por organismos públicos a apoyar la transformación digital del tejido empresarial.;Total anual (en €) de recursos públicos regionales, nacionales o europeos destinados al emprendimiento digital;•Importe total de recursos públicos invertidos en programas de digitalización en el año;DDP;Media;;;https://elreferente.es/ecosistema/en-espana-hay-3-365-startups-activas/;
+Capital humano ;Competencias digitales de la población;Personas con habilidades digitales básicas;OK;"NACIONAL
+(EUROPA)";Porcentaje de población que posee habilidades digitales básicas, como el uso de correo electrónico o navegación web.;% de población entre 16 y 74 años con habilidades digitales básicas según clasificación Eurostat;"•Nº de personas entre 16 y 74 años que tienen habilidades digitales básicas
+•Población total entre 16 y 74 años";EIDES / Marco  DMAT / Marco DESI;Media;"2021, 2023 
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_sk_dskl_i21/default/table?lang=en;https://cincodias.elpais.com/cincodias/2022/11/02/pyme/1667428627_688315.html;
+Capital humano ;Competencias digitales de la población;Personas con habilidades digitales generales superiores a las básicas;OK;"NACIONAL
+(EUROPA)";Porcentaje de empleados con habilidades digitales complejas, como programación o análisis de datos.;% de población entre 16 y 74 años con habilidades digitales superiores a las básicas;"•Nº de personas entre 16 y 74 años que tienen habilidades digitales superiores a las básicas
+•Población total entre 16 y 74 años";EIDES / Marco  DMAT / Marco DESI;Media;"2021, 2023 
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_sk_dskl_i21/default/table?lang=en;https://cotec.es/;
+Capital humano ;Competencias digitales de la población;Uso regular de Internet;OK;"NACIONAL
+(EUROPA)";Porcentaje de personas que acceden a Internet al menos una vez por semana.;% de personas entre 16 y 74 años que han utilizado Internet al menos una vez por semana en los últimos 3 meses;"•Nº de personas entre 16 y 74 años que han usado internet al menos una vez por semana en los últimos 3 meses
+•Población total entre 16 y 74 años"; DAI;Baja;"2003-2023
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_ci_ifp_fu/default/table?lang=en;;
+Capital humano ;Competencias digitales de la población;Usuarios que usan banca online;OK;"NACIONAL
+(EUROPA)";Proporción de población que realiza operaciones bancarias por Internet.;% de personas entre 16 y 74 años que han accedido a servicios de banca electrónica en los últimos 3 meses;"•Nº de personas entre 16 y 74 años que han accedido a servicios de banca en los últimos 3 meses
+•Población total entre 16 y 74 años";DESI;Baja;"2003-2023
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_ci_ac_i/default/table?lang=en;EIDES 2020 The European Index of Digital Entrepreneurship Systems;
+Capital humano ;Competencias digitales de la población;Número de certificaciones y formaciones en competencias digitales;;;Total de acreditaciones y programas formativos completados en habilidades digitales.;Total anual de certificados o formaciones acreditadas en competencias digitales impartidas en la región;•Nº total de certificaciones o formaciones acreditadas en competencias digitales;EIDES / Marco  DMAT;Baja;;;;
+Capital humano ;Formación continua y reciclaje profesional;% de empleados que han recibido formación digital en el último año;;;;(Nº empleados formados en TIC / Total empleados) × 100;"•Nº de empleados formados en TIC
+•Nº total de empleados";Adición propia;Media;;;;
+Capital humano ;Formación continua y reciclaje profesional;Gasto medio por empresa en formación TIC;;;;Total € invertido en formación TIC / Nº empresas;"•Total en euros invertidos en formación TIC por todas las empresas
+•Nº total de empresas";Adición propia;Media;;;;
+Capital humano ;Formación continua y reciclaje profesional;Nº de programas de recualificación digital activos;;;;(Nº de personas que cursaron formación digital online / Población activa) × 100;"•Nº de personas que han cursado formación digital online
+•Población activa total";Adición propia;Baja;;;;
+Capital humano ;Formación continua y reciclaje profesional;% de trabajadores que acceden a certificaciones online (MOOC, formación formal);;;;Conteo de programas de formación para transformación profesional en digitalización;•Nº de programas de formación para transformación profesional en digitalización;Adición propia;Baja;;;;
+Capital humano ;Formación continua y reciclaje profesional;% de empresas que promueven formación digital interna;;;;% de empresas que declaran tener un plan activo de formación en habilidades digitales;"•Nº de empresas que declaran tener un plan activo de formación en habilidades digitales
+•Nº total de empresas";Adición propia;Media;;;;
+Capital humano ;Talento profesional TIC ;Movilidad de talento digital;;;Indicador del flujo de profesionales digitales entre empresas, sectores o países.;Nº de profesionales TIC que han cambiado de empresa o región en el último año / Total de profesionales TIC × 100;"•Nº de profesionales TIC que han cambiado de empresa o región en el último año
+•Nº total de profesionales TIC";Marco DMAT;Media;;;"Informe ""Economía Digital en España"" - Adigital 2024";
+Capital humano ;Talento profesional TIC ;Crecimiento del empleo en sectores tecnológicos;;;Variación anual en el número de trabajadores empleados en sectores vinculados a la tecnología digital.;(Nº de empleados en sectores TIC año t – año t-1) / Nº de empleados año t-1 × 100;•Nº de empleados en sectores TIC en año t y año t-1;ONTSI;Media;;;https://www.computing.es/mercado-ti/cual-es-la-inversion-tic-en-aapp/;
+Capital humano ;Talento profesional TIC ;Formación en TIC en empresas;OK;"NACIONAL
+(EUROPA)";Proporción de empresas que ofrecen formación en tecnologías digitales a sus empleados.;% de empresas que han ofrecido formación en competencias digitales o TIC a sus empleados durante el último año;"•Nº de empresas que han ofrecido formación en TIC o competencias digitales en el último año
+•Nº total de empresas";Marco DMAT / Marco DESI;Baja;;;https://ec.europa.eu/eurostat/databrowser/view/educ_uoe_grad03/default/table?lang=en;
+Capital humano ;Talento profesional TIC ;Población con formación en TIC;;;Personas con título universitario en carreras relacionadas con TIC;% de personas entre 25 y 64 años con formación reglada o acreditada en disciplinas TIC;"•Nº de personas entre 25 y 64 años con titulación o acreditación TIC
+•Población total entre 25 y 64 años";Adición propia;Alta;;;;
+Capital humano ;Talento profesional TIC ;Empresas que declaran dificultades para contratar perfiles TIC;;;% de empresas que declaran dificultades para contratar perfiles TIC (señal de brecha);% de empresas que han intentado contratar perfiles TIC y reportan dificultad para cubrir vacantes;"•Nº de empresas que han intentado contratar perfiles TIC y han reportado dificultad para cubrir vacantes
+•Nº total de empresas que han intentado contratar perfiles TIC";Adición propia;Alta;;;https://www.aoc.cat/es/projecte-innovacio/imd/;
+Ecosistema y colaboración ;Atractivo y dinamismo del ecosistema;Índice de competitividad digital;;;Medida global que evalúa la capacidad de un territorio para competir en la economía digital (talento digital, acceso a tecnología y uso empresarial, marco regulatorio y facilidad para innovar, preparación para cambios tecnolígicos futuros, inversión en I+D y digitalización).;Indice complejo compuesto de indicadores presentes;;Marco DESI;EXTRAIDO ;;No necesita;https://espanadigital.gob.es/ca/indicadores/espa%C3%B1a-digital;
+Ecosistema y colaboración ;Atractivo y dinamismo del ecosistema;Número de eventos regionales anuales de innovación y colaboración digital;;;;Total de eventos presenciales o virtuales celebrados en la región durante el año sobre emprendimiento, innovación abierta, transferencia tecnológica o digitalización;•Nº total de eventos presenciales o virtuales en la región sobre emprendimiento, innovación abierta, transferencia tecnológica o digitalización;Adición propia;Baja;;;;
+Ecosistema y colaboración ;Entorno de provisión tecnológica;Densidad de empresas proveedoras TIC y digitales;;;Cantidad de proveedores de servicios TIC y digitales frente al total de empresas;Número de empresas del sector TIC (CNAE 26, 61, 62, 63) por cada 1.000 empresas activas;"•Nº de empresas del sector TIC (CNAE 26, 61, 62, 63)
+•Nº total de empresas activas ";Adición propia;Baja;;;"Informe 2025 ""La economía digital en España, avances y retos por regiones y sectores"" - COTEC/ IVIE";
+Ecosistema y colaboración ;Entorno de provisión tecnológica;Contribución económica del sector TIC;;;Facturación global del sector TIC (CNAE 26, 61, 62, 63) frente al PIB de la región;Suma de facturación empresas del sector TIC (CNAE 26, 61, 62, 63) / PIB región;"•Facturación empresas del sector TIC (CNAE 26, 61, 62, 63)
+• PIB región";Adición propia;Alta;;;;
+Ecosistema y colaboración ;Entorno de provisión tecnológica;% de empresas TIC que participan en clústeres, redes o plataformas digitales;;;;(Nº de empresas TIC asociadas a clústeres o plataformas / Total empresas TIC) × 100;"•Nº de empresas TIC asociadas a clústeres o plataformas digitales
+•Nº total de empresas TIC ";Adición propia;Baja;;;;
+Ecosistema y colaboración ;Transferencia de conocimiento ;Número de acuerdos universidad-empresa en I+D;;;Cantidad de colaboraciones formalizadas entre instituciones universitarias y empresas para actividades de investigación y desarrollo.;Número total de convenios activos en el año entre universidades públicas/privadas y empresas de la región para el desarrollo de proyectos I+D;•Nº total de convenios activos entre universidades públicas/privadas y empresas en la región para I+D;EIDES / NRI;Baja;;;https://stats.oecd.org/Index.aspx?DataSetCode=ICT_ BUS;
+Ecosistema y colaboración ;Transferencia de conocimiento ;Nº de colaboraciones público-privadas en innovación digital;;;Contabiliza las iniciativas conjuntas entre administraciones públicas y empresas privadas orientadas al desarrollo o adopción de soluciones digitales.;Número de proyectos colaborativos activos con participación conjunta de administraciones públicas y empresas en materia de digitalización;•Nº de proyectos colaborativos entre administraciones públicas y empresas privadas en materia de digitalización;EIDES;Media;;;https://www.upm.es/sfs/Rectorado/Vicerrectorado%20de%20Investigacion/Oficina%20de%20Transferencia%20de%20Resultados%20de%20Investigacion%20%28OTRI%29/Catedras/INFORME%20CATEDRAS%202017_%2014122017.pdf;
+Ecosistema y colaboración ;Transferencia de conocimiento ;Presencia en proyectos europeos o consorcios de innovación digital;;;Participación activa de entidades nacionales en iniciativas, convocatorias y redes de colaboración promovidas por la Unión Europea en el ámbito de la transformación digital;Número de participaciones de entidades regionales en proyectos tipo Horizon Europe, Digital Europe, etc.;•Nº  total de participaciones de entidades en proyectos europeos;EIDES;Baja;;;"Informe ""Uso de licencias en el portal de data.europa.eu"" - Ministerio de Asuntos Económicos y Transformación Digital";
+Infraestructura digital ;Acceso a infraestructuras;Índice de conectividad avanzada (GCI);;;Evalúa la cobertura y calidad de la conectividad digital en una región (cobertura de banda ancha fija rápida y ultrarrápida, cobertura 5G, precio medio del acceso a internet, latencia y velocidad de conexión).;Indice complejo compuesto de indicadores presentes;;;EXTRAIDO ;;No necesita;https://vasscompany.com/es/about-us/newsroom/informe-sobre-empleabilidad-y-talento-digital-2023/;
+Infraestructura digital ;Acceso a infraestructuras;Número de nodos de datos Edge desplegados;;;Cantidad o densidad de centros de procesamiento de datos distribuidos en el borde de la red para reducir la latencia y mejorar la eficiencia.;Conteo total de nodos de computación periférica (Edge) activos en la región durante el año;•Nº total de nodos de computación perimetral (Edge) activos;Marco DDP;Media;;; Resultados provisionales de la participación española en Horizonte Europa - Ministerio de Ciencia e Innovación.;
+Infraestructura digital ;Acceso a infraestructuras;Cobertura de banda ancha fija ;;;Porcentaje de hogares con acceso a banda ancha con velocidades mínimas de 30 Mbps.;% de hogares cubiertos por al menos una conexión de banda ancha fija (?30 Mbps);"
+•Nº de hogares cubiertos por al menos una conexión de banda ancha fija (? 30 Mbps)
+•Nº total de hogares";EIDES / Maco DESI ;Alta;"2013-2022
+Nacional
+Encuesta
+API";https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;https://www.ivie.es/wp-content/uploads/2025/01/NP_ObservatorioProductividad_informe2024_14012025.pdf;
+Infraestructura digital ;Acceso a infraestructuras;Cobertura de redes de muy alta capacidad (VHCN) ;OK;"NACIONAL
+(EUROPA)";Porcentaje de hogares con acceso a conexiones superiores a 100 Mbps.;% de hogares cubiertos por redes VHCN (como FTTH, cable DOCSIS 3.1);"
+•Nº de hogares cubiertos por redes VHCN (FTTH, cable DOCSIS 3.1)
+•Nº total de hogares";Marco DESI;Media;"2013-2022
+Nacional
+Encuesta
+API";https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;https://comercio.gob.es/es-es/inversiones_exteriores/Documents/2023_EN_CIFRAS.pdf;
+Infraestructura digital ;Acceso a infraestructuras;Adopción de banda ancha fija (suscripciones/100 personas);OK;PROVINCIAL;Número de suscripciones de banda ancha fija (líneas) por cada 100 personas. Penetración de la banda ancha fija.;(Número total de suscripciones de banda ancha fija / Población total) × 100;"•Nº total de suscripciones de banda ancha fija
+•Población total";Marco DESI;Alta;"2004-2022
+Nacional
+Encuesta
+API";https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;https://www.gartner.es/es/director-de-sistemas-de-informacion/insights/kpi-de-rendimiento-digital;
+Infraestructura digital ;Acceso a infraestructuras;Adopción de banda ancha móvil (suscripciones/100 personas);OK;PROVINCIAL;La penetración de banda ancha móvil se define como el número de tarjetas SIM de banda ancha móvil activas por cada 100 personas.;(Número total de suscripciones activas de datos móviles / Población total) × 100;"•Nº total de suscripciones activas de datos móviles
+•Población total";Marco DESI;Alta;"2008-2022
+Nacional
+Encuesta
+API";https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;;
+Infraestructura digital ;Acceso a infraestructuras;Cobertura 5G;;;Porcentaje de población con acceso a cobertura de redes móviles de quinta generación.;% de población cubierta por al menos una red 5G activa;"•Nº total de personsas cubiertas por al menos una red 5G activa
+•Población total";EIDES / Marco DESI;Alta;"2021, 2023 
+Provincial CV
+Portal estadístico de la CV";https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;;
+Infraestructura digital ;Acceso a infraestructuras;Precio relativo de banda ancha;OK;"NACIONAL
+(ESPAÑA)";Costo medio mensual del servicio de internet, ajustado por poder adquisitivo.;Precio mensual de una conexión de banda ancha en relación con la Renta Nacional Bruta (RNB) per cápita;"•Pprecio mensual del servicio de banda ancha en euros
+•Renta nacional bruta per cápita";Marco DESI;Alta;;https://data.cnmc.es/telecomunicaciones-y-sector-audiovisual/conjuntos-de-datos/datos-provinciales/telecomunicaciones;;
+Servicios públicos digitales;Disponibilidad de servicios públicos digitales ;% de servicios públicos accesibles de forma totalmente digital;;;;(Nº de servicios públicos disponibles completamente online / Total de servicios evaluados) × 100;"•Nº de servicios públicos disponibles completamente online
+•Nº total de servicios públicos evaluados";DESI;Baja;;;;
+Servicios públicos digitales;Disponibilidad de servicios públicos digitales ;% de trámites administrativos que pueden completarse en línea;;;;(Nº de trámites disponibles en línea / Total de trámites administrativos posibles) × 100;"•Nº de de trámites que pueden realizarse completamente en línea
+•Nº total de trámites administrativos posibles";Adición propia;Alta;;;;
+Servicios públicos digitales;Disponibilidad de servicios públicos digitales ;Índice de madurez de los servicios públicos digitales;;;;Indice complejo compuesto de indicadores presentes;;NRI;Baja;;No necesita;https://www.ine.es/jaxi/Tabla.htm?tpx=59881&L=0;
+Servicios públicos digitales;Disponibilidad de servicios públicos digitales ;"Inversión pública en TIC por habitante (gasto tecnológico del sector público)
+";;;;Total anual de gasto TIC del sector público regional / Población total;"•Gasto total anual en TIC por parte del sector público regional
+•Población total";Adición propia;Media;;;;
+Servicios públicos digitales;Interacción digital con la administración;Personas que interactúan en línea con las autoridades públicas;OK;"NACIONAL
+(EUROPA)";Personas que han utilizado internet en los últimos 12 meses para interactuar con las autoridades públicas. Esto incluye obtener información de sitios web de las autoridades públicas, descargar formularios oficiales o enviar formularios cumplimentados. Unidad de medida: Porcentaje de personas que han utilizado internet en los últimos 12 meses.;(Nº de personas entre 16-74 años que usaron e-administración en los últimos 12 meses / Población 16-74 años) × 100;"•Nº de personas entre 16 y 74 años que usaron e-administración en los últimos 12 meses
+•Población entre 16 y 74 años";DII / Marco DESI;Alta;"2008-2021
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_ciegi_ac/default/table?lang=en;;
+Servicios públicos digitales;Interacción digital con la administración;Servicios Públicos Digitales para Empresas;;;Grado en que un servicio o información relativa a un servicio para empresas se proporciona en línea y a través de un portal. Servicios que se ofrecen total, parcialmente o directamente en línea.;(Nº de servicios administrativos empresariales accesibles online / Total de servicios relevantes para empresas) × 100;"•Nº de servicios administrativos empresariales accesibles online
+•Nº total de servicios relevantes para empresas";Marco DESI;Alta;"2013-2020
+Nacional
+Encuesta
+API";Informes de referencia sobre administración electrónica (2012-2025);;
+Servicios públicos digitales;Interacción digital con la administración;Uso del sistema de identidad digital (Cl@ve o equivalente);;;;% de personas que han usado identificación electrónica en los últimos 12 meses para acceder a servicios públicos;"•Nº de personas que han usado identificación electrónica en los últimos 12 meses
+•Población entre 16 y 74 años";Adición propia;Media;;;;
+Servicios públicos digitales;Interacción digital con la administración;Índice de satisfacción ciudadana con servicios públicos digitales;;;;Promedio de puntuaciones de satisfacción ciudadana (escala 0-10) recogidas mediante encuestas representativas;•Puntuación de satisfacción ciudadana con servicios públicos digitales;Adición propia;Alta;;;;
+Sostenibilidad digital ;Economía circular y estrategias verdes ;Empresas tecnológicas con estrategias de reducción de huella de carbono ;;;Proporción de empresas que han adoptado compromisos formales para reducir su huella de carbono a cero.;(Nº de empresas tecnológicas con planes documentados de descarbonización / Total de empresas tecnológicas) × 100;"•Nº de empresas tecnológicas que tienen planes documentados de descarbonización
+•Nº total de empresas tecnológicas";Marco DMAT;Baja;;;https://vasscompany.com/es/about-us/newsroom/informe-sobre-empleabilidad-y-talento-digital-2023/;
+Sostenibilidad digital ;Economía circular y estrategias verdes ;Inversión en economía circular digital;;;Gasto en soluciones tecnológicas que favorecen el reciclaje, reutilización y sostenibilidad.;Total anual (en €) invertido por empresas en proyectos de economía circular habilitada por TIC;•Gasto total anual en proyectos de economia circular habilitada por TIC;Marco DMAT;Media;;;"Informe ""Economía Digital en España"" - Adigital 2024";
+Sostenibilidad digital ;Eficiencia y huella ambiental;Uso de TIC para eficiencia energética;;;Porcentaje de empresas o entidades que emplean tecnologías digitales para optimizar el consumo energético, reducir emisiones o mejorar la sostenibilidad de sus operaciones;Nº empresas que utilizan TIC (sensores, software, IoT) para monitorizar o reducir el consumo energético / total empresas;"•Nº de empresas que utilizan TIC (sensores, software, IoT) para monitorizar o reducir consumo energético
+•Nº total de empresas";Marco DMAT / Marco DDP ;Media;;;"Informe ""España digital 2026"" - Gobierno de España";
+Sostenibilidad digital ;Eficiencia y huella ambiental;Impacto de la digitalización en reducción de papel;;;Disminución en el uso de papel gracias a la implementación de procesos digitales (% de trámites administrativos digitalizados, adopción de facturación electrónica, uso de la firma digital...).;% de empresas que declaran una disminución del uso de papel como resultado de procesos digitales;"•Nº de empresas que declaran reducción en el uso de papel gracias a la digitalización
+•Nº total de empresas";Marco DMAT;Media;;;;
+Sostenibilidad digital ;Eficiencia y huella ambiental;Empresas preocupadas por el impacto ambiental de decisiones y prácticas digitales;;;Número de empresas que están teniendo en cuenta aspectos como preocupaciones y normas ambientales en sus decisiones digitales, tienen certificaciones ambientales, etc.;Nº empresas que han respondido afirmativamente;Nº empresas que han respondido afirmativamente;Marco DMAT;Media;;;;
+Sostenibilidad digital ;Eficiencia y huella ambiental;Consumo energético promedio de las infraestructuras digitales;;;Cantidad media de energía consumida por servidores, centros de datos y redes digitales.;kWh anuales consumidos por centros de datos, servidores y redes TIC / Nº empresas TIC o m² de infraestructura;"•Consumo energético total anual (en kWh) por centros de datos, servidores y redes TIC
+•Nº total de empresas TIC o metros cuadrados de infraestructura";Adición propia;Media;;;;
+Sostenibilidad digital ;Eficiencia y huella ambiental;Residuos electrónicos gestionados correctamente;;;Proporción de dispositivos electrónicos desechados que se recogen, tratan y reciclan siguiendo procedimientos adecuados conforme a normativas medioambientales;(Toneladas de RAEE gestionadas según normativa / Toneladas de RAEE generadas por empresas) × 100;"•Toneladas de RAEE gestionadas según normativa
+•Toneladas de RAEE generadas por empresas";Marco DMAT;Baja;;;"Informe ""Economía Digital en España"" - Adigital 2024";
+Transformación digital empresarial;Cultura de organización digital;% de empresas que incluyen objetivos digitales en su estrategia;;;Porcentaje de organizaciones que integran metas relacionadas con la digitalización en sus planes estratégicos o de desarrollo empresarial;(Nº de empresas con objetivos digitales explícitos / Total empresas encuestadas) × 100;"•Nº de empresas con objetivos digitales explícitos
+•Nº total de empresas encuestadas";Marco DMAT;Alta;;;Barómetro de la economía digital AMETIC 2023;
+Transformación digital empresarial;Cultura de organización digital;% de directivos con formación en transformación digital;;;Proporción de responsables de nivel directivo que han recibido formación específica sobre digitalización, nuevas tecnologías o modelos de negocio digitales;(Nº de directivos con formación acreditada en digitalización / Total directivos) × 100;"•Nº de directivos con formación acreditada en digitalización
+•Nº total de directivos";Marco DMAT;Baja;;;Barómetro de la economía digital AMETIC 2023;
+Transformación digital empresarial;Cultura de organización digital;% de empresas con responsable de digitalización o CIO;;;Porcentaje de empresas que cuentan formalmente con una figura dedicada a liderar la estrategia digital o tecnológica, como un director de sistemas de información (CIO) o equivalente;(Nº de empresas con un cargo formal de CIO o equivalente / Total empresas) × 100;"•Nº de empresas con un cargo formal de CIO o equivalente
+•Nº total de empresas";Marco DMAT;Media;;;"Informe ""Índice de calidad del Gobierno electrónico 2023"" - Naciones Unidas";
+Transformación digital empresarial;Cultura de organización digital;Índice de apertura al cambio digital;;;Indicador compuesto que mide el grado de disposición de las empresas y su plantilla para adoptar nuevas tecnologías, modificar procesos y adaptarse al entorno digital;Promedio ponderado de respuestas a escala Likert sobre actitud hacia la digitalización (0–100);;Marco DMAT;EXTRAIDO;;;https://www.fundacioncyd.org/el-informe-cyd-2023-analiza-la-situacion-de-la-id-en-espana-y-el-rol-esencial-de-la-universidad-en-la-generacion-del-conocimiento/;
+Transformación digital empresarial;Cultura de organización digital;% de empresas que promueven formación continua en TIC;;;Porcentaje de organizaciones que impulsan de manera regular la capacitación de su personal en tecnologías de la información y la comunicación;(Nº de empresas con programas internos de formación TIC / Total empresas) × 100;"•Nº de empresas con programas internos de formación TIC
+•Nº total de empresas";Marco DMAT;Media;;;https://mobileworldcapital.com/trends/tech-hubs-overview-2025/?utm_source=chatgpt.com;
+Transformación digital empresarial;Digitalización básica;Empresas que utilizan las redes sociales;OK;"NACIONAL
+(EUROPA)";Empresas que utilizan al menos una de las siguientes redes sociales: redes sociales, blog o microblog empresarial, sitios web para compartir contenido multimedia y herramientas de intercambio de conocimiento basadas en wikis. El uso de redes sociales implica que la empresa disponga de un perfil de usuario, una cuenta o una licencia de usuario, según los requisitos y el tipo de red social.;% de empresas que usan plataformas sociales para comunicación, marketing o atención;"•Nº de empresas que usan redes sociales para comunicación, marketing o atención
+•Nº total de empresas";DII / Marco DESI;Baja;"2017-2023
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_cismtn2/default/table?lang=en;"Informe ""Índice de calidad del Gobierno electrónico 2023"" - Naciones Unidas";
+Transformación digital empresarial;Digitalización básica;Empresas que tienen un sitio web o página de inicio;OK;"NACIONAL
+(EUROPA)";Porcentaje de empresas que disponen de una página web operativa como canal de información, promoción o comercialización digital;% de empresas con presencia web activa propia;"•Nº de empresas con presencia web activa propia
+•Nº total de empresas";DII;Media;"2009-2021, 2023
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_ciweb/default/table?lang=en;"Informe ""Índice de calidad del Gobierno electrónico 2023"" - Naciones Unidas";
+Transformación digital empresarial;Digitalización básica;Teletrabajo;OK;"NACIONAL
+(EUROPA)";Porcentaje de empresas con infraestructura para permitir el teletrabajo a sus empleados;% de empresas que permiten el teletrabajo a parte de su plantilla;"•Nº de empresas que permiten el teletrabajo a parte de su plantilla
+•Nº total de empresas";Marco DMAT;Baja;"Primer trimestre 2021
+Nacional
+INE (Encuesta)";https://www.ine.es/jaxi/Tabla.htm?tpx=49858&L=0;https://ec.europa.eu/eurostat/en/web/products-eurostat-news/-/ddn-20220826-1;
+Transformación digital empresarial;E-commerce;Empresas que utilizan el mercado de comercio electrónico para ventas;OK;"NACIONAL
+(EUROPA)";Porcentaje de empresas que, durante el año calendario anterior, recibieron pedidos de bienes o servicios a través de un mercado de comercio electrónico;% de empresas que venden online a través de plataformas o web propias;"•Nº de empresas que venden online mediante plataformas o web propias
+•Nº total de empresas";DII / Marco DESI;Alta;"2017-2023
+Nacional
+Eurostat
+API";https://ec.europa.eu/eurostat/databrowser/view/isoc_ec_esels/default/table?lang=en;"Informe ""Economía Digital en España"" - Adigital 2024";
+Transformación digital empresarial;E-commerce;Ingresos por e-commerce;;;Proporción del total de ingresos de las empresas que procede de ventas realizadas por medios electrónicos, incluyendo tanto canales propios como plataformas de terceros.;(Ingresos totales por ventas online / Ingresos totales de la empresa) × 100;"•Ingresos totales por ventas online
+•Ingresos totales de la empresa";DII;Alta;;;Barómetro de la economía digital AMETIC 2023;
+Transformación digital empresarial;E-commerce;Volumen de exportación de productos y servicios tecnológicos;;;Valor total de exportaciones de productos vinculados a tecnologías de la información y la comunicación.;Total anual exportado (en €) por empresas TIC y digitales registradas;•Valor total en euros exportado por empresas TIC y digitales registradas;EIDES;Baja;;;;
+Transformación digital empresarial;Tecnologías avanzadas;Número de empresas que realizan I+D en el sector TIC;OK;"NACIONAL
+(EUROPA)";Empresas tecnológicas que realizan investigación y desarrollo;Conteo de empresas TIC que declaran actividades internas de I+D;•Nº de empresas TIC que declaran actividades internas de I+D;EIDES;Media;"2022-2021
+Nacional
+INE
+";https://www.ine.es/jaxi/Datos.htm?tpx=67905#_tabs-tabla;https://european-digital-innovation-hubs.ec.europa.eu/es/open-dma;
+Transformación digital empresarial;Tecnologías avanzadas;Número de patentes tecnológicas registradas;;;Cantidad de patentes relacionadas con tecnologías digitales registradas durante un periodo determinado.;Total de patentes TIC solicitadas o concedidas por empresas regionales;•Nº total de patentes TIC solicitadas o concedidas por empresas regionales;EIDES;Baja;;;;
+Transformación digital empresarial;Tecnologías avanzadas;Empresas que comparten información electrónica internamente con un ERP;OK;"NACIONAL
+(EUROPA)";Tener en uso un paquete de software ERP-Enterprise Resource Planning, para compartir información entre diferentes áreas funcionales (por ejemplo contabilidad, planificación, producción, marketing).;% de empresas que usan ERP para integrar procesos internos;"•Nº de empresas que usan ERP para integrar procesos internos
+•Nº total de empresas";DII / Marco DMAT / Marco DESI;Alta;"2009-2010, 2012-2015, 2017, 2019, 2021, 2023
+Nacional
+Eurostat
+API
+";https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_iipn2/default/table?lang=en;;
+Transformación digital empresarial;Tecnologías avanzadas;Empresas que utilizan software de gestión de relaciones con los clientes (CRM);OK;"NACIONAL
+(EUROPA)";Empresas con 10 o más personas empleadas. Todos los sectores manufactureros y de servicios, excepto el sector financiero.;% de empresas que utilizan CRM;"•Nº de empresas que utilizan CRM
+•Nº total de empresas";DII / Marco DMAT / Marco DESI;Alta;"2009-2010, 2012-2015, 2017, 2019, 2021
+Nacional
+Eurostat
+API
+";https://digital-decade-desi.digital-strategy.ec.europa.eu/datasets/key-indicators/indicators#broadband;;
+Transformación digital empresarial;Tecnologías avanzadas;Empresas con infraestructura en la nube;OK;"NACIONAL
+(EUROPA)";Porcentaje de empresas que utilizan servicios de computación en la nube para almacenar o procesar datos.;% de empresas que usan servicios de cloud computing;"•Nº de empresas que usan servicios de cloud computing
+•Nº total de empresas";DII / Marco DMAT;Alta;"Primer trimestre 2023
+Nacional
+INE (Encuesta)
+";https://www.ine.es/jaxi/Datos.htm?tpx=59890#_tabs-tabla;Eurostat;
+Transformación digital empresarial;Tecnologías avanzadas;Empresas que analizan big data de cualquier fuente de datos;OK;"NACIONAL
+(EUROPA)";Analizar grandes volúmenes de datos de cualquier fuente;% de empresas que utilizan big data (de redes sociales, sensores, etc.);"•Nº de empresas que utilizan que utilizan big data (de redes sociales, sensores, etc.)
+•Nº total de empresas";DII / Marco DMAT / Marco DESI;Alta;"2016, 2018
+Nacional
+Eurostat
+API
+";https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_bdn2/default/table?lang=en;"Informe ""Digitalización y Sostenibilidad 2023"" - Fundación COTEC";
+Transformación digital empresarial;Tecnologías avanzadas;Empresas que usan inteligencia artificial;OK;"NACIONAL
+(EUROPA)";Porcentaje de empresas que implementan tecnologías de inteligencia artificial para automatizar procesos o generar análisis predictivos.;% de empresas que declaran el uso de IA en procesos o productos;"•Nº de empresas que declaran uso de IA en procesos o productos
+•Nº total de empresas";Marco DMAT / Marco DESI;Media;"2021, 2023
+Nacional
+Eurostat
+API
+";https://ec.europa.eu/eurostat/databrowser/view/isoc_eb_ai/default/table?lang=en;"Informe ""Green Digital Economy 2023"" - Ministerio de Asusntos Económicos y Transformación Digital";
+Transformación digital empresarial;Tecnologías avanzadas;Inversión total en redes del sector de las comunicaciones electrónicas;;;La inversión total incluye la inversión tangible e intangible en redes de telecomunicaciones (sin derechos de licencia) de todos los operadores de telecomunicaciones.;Suma total anual invertida en infraestructuras de red y conectividad (en €);•Inversión total en redes del sector de las comunicaciones electrónicas;Marco DMAT;Media;"2009-2015
+Nacional
+Encuesta
+API
+";Estudios sobre la cobertura de banda ancha en Europa para la Comisión Europea realizados por Omdia y Point Topic;"Informe ""Cobertura de banda ancha en España 2023"" - Ministerio de Asuntos Económicos y Transformación Digital";
+Transformación digital empresarial;Tecnologías avanzadas;Participación de empresas en proyectos de innovación financiados por la UE;;;Número de empresas que participan en proyectos de I+D financiados con fondos europeos.;Nº de empresas regionales participantes en proyectos Horizon, EIC, Digital Europe, etc.;•Nº de empresas regionales participantes en proyectos Horizon, EIC, Digital Europe, etc.;Adición propia;Baja;;;"Informe ""Cobertura de banda ancha en España 2023"" - Ministerio de Asuntos Económicos y Transformación Digital";
+Transformación digital empresarial;Tecnologías avanzadas;Inversión extranjera en empresas de base tecnológica;;;Cuantifica el capital proveniente de otros países que se destina a empresas locales cuyo modelo de negocio se basa en el desarrollo o uso intensivo de tecnología.;Total anual en € de inversión directa extranjera en empresas TIC regionales;•Total anual de inversión directa extranjera en empresas TIC regionales;Adición propia;Baja;;;"Informe ""Cobertura de banda ancha en España 2023"" - Ministerio de Asuntos Económicos y Transformación Digital";
+Transformación digital empresarial;Tecnologías avanzadas;Productividad en empresas digitalizadas;;;Nivel de rendimiento económico por empleado en empresas con alto grado de digitalización.;Valor añadido bruto por empleado en empresas con alto nivel de digitalización;"•VAB total de empresas digitalizadas
+•Nº total de empleados en empresas digitalizadas";Marco DMAT;Media;;;"Informe ""Cobertura de banda ancha en España 2023"" - Ministerio de Asuntos Económicos y Transformación Digital";
+Transformación digital empresarial;Tecnologías avanzadas;Índice de experimentación empresarial en nuevos modelos digitales;;;Grado en el que las empresas prueban y adoptan modelos de negocio digitales innovadores (% de empresas que desarrollan nuevos productos o servicios digitales, participación en proyectos piloto o pruebas de concepto, colaboración con startups y centros de innovación, creación de unidades internas de innovación...).;Puntuación basada en % de empresas que prueban nuevos productos, servicios o modelos digitales;;Marco DMAT;EXTRAIDO;;;"Informe ""Digital Infrastructure Report 2023"" - Comisión Europea ";
+Transformación digital empresarial;Tecnologías avanzadas;Índice de Intensidad Digital (DII);;;Mide el grado de adopción de tecnologías digitales por parte de las empresas. Se basa en la utilización de 12 tecnologías digitales clave (uso de redes sociales, comercio electrónico, análisis de big data, computación en la nube...). Las empresas se clasifican según el número de tecnologías adoptadas.;Suma de 0–12 tecnologías digitales adoptadas por empresa ? Escalado 0–100;;DII;EXTRAIDO;;;;
+Transformación digital empresarial;Tecnologías avanzadas;Nivel de adopción de herramientas digitales en pymes y grandes empresas;;;Mide el grado en que las empresas han integrado tecnologías como CRM, ERP, comercio electrónico, análisis de datos, ciberseguridad o automatización en sus procesos internos.;% de pymes y grandes empresas que han adoptado al menos 4 herramientas TIC clave;"•Nº de pymes y grandes empresas que han adoptado al menos 4 herramientas TIC clave
+•Nº total de pymes y grandes empresas";DII;Alta;;;;
+Transformación digital empresarial;Tecnologías avanzadas;Índice de ciberseguridad en empresas;;;Porcentaje de empresas que implementan medidas de ciberseguridad en múltimes frentes dentro de la empresa (uso de firewalls y antivirus, estrategias de protección de datoa, planes de respuesta ante incidentes, formación del personal en ciberseguridad...).;Índice compuesto basado en uso de firewalls, antivirus, formación, backup, etc.;;Marco DMAT;EXTRAIDO;;;Barómetro de la economía digital AMETIC 2023;
+Transformación digital empresarial;Tecnologías avanzadas;Automatización robótica de procesos (RPA);;;Proporción de empresas que implementan soluciones de automatización mediante software o robots para ejecutar tareas repetitivas dentro de sus procesos operativos;% de empresas que han implementado tecnologías de RPA para automatizar procesos;"•Nº de empresas que han implementado tecnologías de RPA para automatizar procesos
+•Nº total de empresas";Marco DMAT;Media;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
