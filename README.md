@@ -1,73 +1,81 @@
-# Welcome to your Lovable project
+# Cámara de Comercio de Valencia - Plataforma Digital
 
-## Project info
+Plataforma integral para el análisis, monitorización y desarrollo del ecosistema digital valenciano.
 
-**URL**: https://lovable.dev/projects/ccf722d6-7050-4dd0-90a9-d85d8fd9e570
+## Descripción
 
-## How can I edit this code?
+Esta aplicación proporciona una plataforma completa para:
+- Análisis de indicadores económicos y KPIs
+- Visualización de datos abiertos
+- Gestión de encuestas y participación ciudadana
+- Dashboard administrativo para gestión de usuarios
 
-There are several ways of editing your application.
+## Tecnologías
 
-**Use Lovable**
+Este proyecto está construido con:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ccf722d6-7050-4dd0-90a9-d85d8fd9e570) and start prompting.
+- **Vite** - Build tool y dev server
+- **TypeScript** - Lenguaje de programación
+- **React** - Biblioteca de UI
+- **shadcn-ui** - Componentes de UI
+- **Tailwind CSS** - Framework de estilos
+- **Supabase** - Backend y autenticación
 
-Changes made via Lovable will be committed automatically to this repo.
+## Instalación
 
-**Use your preferred IDE**
+### Requisitos previos
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (versión 18 o superior) - [Instalar con nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- npm o yarn
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Pasos de instalación
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Paso 1: Clonar el repositorio
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Paso 2: Navegar al directorio del proyecto
+cd camara-vlc
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Paso 3: Instalar las dependencias
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Paso 4: Configurar variables de entorno
+# Crear archivo .env con las variables necesarias de Supabase
+
+# Paso 5: Iniciar el servidor de desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Scripts disponibles
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Construye la aplicación para producción
+- `npm run start` - Inicia el servidor de preview de producción
 
-**Use GitHub Codespaces**
+## Estructura del proyecto
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+camara-vlc/
+├── src/
+│   ├── components/     # Componentes React reutilizables
+│   ├── pages/          # Páginas de la aplicación
+│   ├── hooks/          # Custom hooks
+│   ├── contexts/       # Context providers
+│   ├── integrations/  # Integraciones con servicios externos
+│   └── lib/            # Utilidades y helpers
+├── public/             # Archivos estáticos
+├── supabase/          # Configuración y migraciones de Supabase
+└── ...
+```
 
-## What technologies are used for this project?
+## Despliegue
 
-This project is built with:
+Consulta los archivos de documentación de despliegue:
+- `DEPLOY.md` - Instrucciones generales de despliegue
+- `DOCKER.md` - Despliegue con Docker
+- `EASYPANEL.md` - Despliegue en EasyPanel
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Licencia
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/ccf722d6-7050-4dd0-90a9-d85d8fd9e570) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Este proyecto es propiedad de la Cámara de Comercio de Valencia.

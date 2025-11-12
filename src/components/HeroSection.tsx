@@ -12,7 +12,7 @@ const HeroSection = () => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="/lovable-uploads/4e3f2d95-6fc0-4490-a937-4cf00f2db14e.png" 
+          src={heroImage}
           alt="Centro Histórico de Valencia" 
           className="w-full h-full object-cover"
         />
