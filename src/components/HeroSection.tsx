@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Users, Building } from "lucide-react";
-import heroImage from "@/assets/valencia-artes.jpg";
+import heroImage from "@/assets/valencia-plaza.jpg";
 
 const HeroSection = () => {
   const navigate = useNavigate();
