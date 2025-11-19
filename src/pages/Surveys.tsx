@@ -27,21 +27,31 @@ const Surveys = () => {
 
   useEffect(() => {
     fetchSurveys();
-  }, []);
+  }, [permissions.canUploadDataSources]);
 
   const fetchSurveys = async () => {
     try {
-      const { data, error } = await supabase
+      // Los admins pueden ver todas las encuestas, otros usuarios solo las activas
+      let query = supabase
         .from("surveys")
         .select("*")
-        .eq("active", true)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      // Si no es admin, solo mostrar encuestas activas
+      if (!permissions.canUploadDataSources) {
+        query = query.eq("active", true);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error fetching surveys:", error);
+        throw error;
+      }
       setSurveys(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching surveys:", error);
-      toast.error("Error al cargar las encuestas");
+      toast.error(`Error al cargar las encuestas: ${error.message || 'Error desconocido'}`);
     } finally {
       setLoading(false);
     }

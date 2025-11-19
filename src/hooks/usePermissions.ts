@@ -7,11 +7,13 @@ export const usePermissions = () => {
   const isUser = profile?.role === 'user' || !profile?.role;
   
   // Permisos específicos
+  // Los admins siempre tienen acceso completo, incluso si active es false
   const canExportData = isAdmin || isEditor;
   const canDownloadReports = isAdmin || isEditor;
   const canUploadDataSources = isAdmin || isEditor;
   const canManageUsers = isAdmin;
-  const canViewData = isAdmin || profile?.active || false;
+  // Admin siempre puede ver datos, usuarios normales necesitan estar activos
+  const canViewData = isAdmin || (profile?.active === true);
   const canAccessAdminPanel = isAdmin;
   
   return {

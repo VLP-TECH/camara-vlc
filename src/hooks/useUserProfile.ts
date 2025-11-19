@@ -41,9 +41,18 @@ export const useUserProfile = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        console.error('Error details:', {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint
+        });
         setProfile(null);
       } else {
         setProfile(data);
+        if (!data) {
+          console.warn('No profile found for user:', user.id);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
