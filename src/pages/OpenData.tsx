@@ -16,6 +16,7 @@ import {
 import NavigationHeader from "@/components/NavigationHeader";
 import FooterSection from "@/components/FooterSection";
 import { Button } from "@/components/ui/button";
+import { fetchCSVWithEncoding } from "@/lib/csv-utils";
 
 interface Indicator {
   dimension: string;
@@ -44,8 +45,8 @@ const OpenData = () => {
 
   const loadIndicators = async () => {
     try {
-      const response = await fetch('/data/indicadores-kpis.csv');
-      const text = await response.text();
+      // Usar función helper para leer CSV con codificación correcta
+      const text = await fetchCSVWithEncoding('/data/indicadores-kpis.csv');
       const lines = text.split('\n');
       const headers = lines[0].split(';');
       

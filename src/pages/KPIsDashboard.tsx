@@ -31,8 +31,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend
+  Legend,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis
 } from "recharts";
+import { fetchCSVWithEncoding } from "@/lib/csv-utils";
 
 interface KPI {
   dimension: string;
@@ -113,8 +119,8 @@ const KPIsDashboard = () => {
 
   const loadKPIs = async () => {
     try {
-      const response = await fetch('/data/kpis-completo.csv');
-      const text = await response.text();
+      // Usar función helper para leer CSV con codificación correcta
+      const text = await fetchCSVWithEncoding('/data/kpis-completo.csv');
       const lines = text.split('\n');
       
       const parsedKPIs: KPI[] = [];
@@ -202,6 +208,42 @@ const KPIsDashboard = () => {
     }));
   };
 
+  const getRadarChartData = (dimensionKPIs: KPI[]) => {
+    // Agrupar por subdimensión y calcular métricas
+    const subdimensionData = dimensionKPIs.reduce((acc, kpi) => {
+      const subdim = kpi.subdimension || 'Otros';
+      if (!acc[subdim]) {
+        acc[subdim] = {
+          name: subdim,
+          total: 0,
+          activos: 0,
+          altaImportancia: 0
+        };
+      }
+      acc[subdim].total += 1;
+      if (kpi.status === 'OK') {
+        acc[subdim].activos += 1;
+      }
+      const importance = kpi.importance?.toLowerCase() || '';
+      if (importance.includes('alta')) {
+        acc[subdim].altaImportancia += 1;
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
+    // Convertir a array y calcular valores normalizados (0-100)
+    const maxTotal = Math.max(...Object.values(subdimensionData).map((d: any) => d.total), 1);
+    
+    return Object.values(subdimensionData)
+      .map((item: any) => ({
+        subdimension: item.name.length > 20 ? item.name.substring(0, 20) + '...' : item.name,
+        'Total': Math.round((item.total / maxTotal) * 100),
+        'Activos': Math.round((item.activos / maxTotal) * 100),
+        'Alta importancia': Math.round((item.altaImportancia / maxTotal) * 100)
+      }))
+      .slice(0, 8); // Limitar a 8 subdimensiones para mejor visualización
+  };
+
   const COLORS = ['hsl(var(--success))', 'hsl(var(--warning))', 'hsl(var(--destructive))', 'hsl(var(--accent))'];
 
   if (loading) {
@@ -226,7 +268,7 @@ const KPIsDashboard = () => {
           <div className="mb-12 text-center">
             <h1 className="text-4xl font-bold text-foreground mb-4 flex items-center justify-center gap-2">
               <TrendingUp className="h-8 w-8 text-primary" />
-              Dashboard Completo de KPIs
+              Dashboard completo de KPIs
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Sistema de indicadores del ecosistema digital valenciano organizados por dimensiones
@@ -265,7 +307,7 @@ const KPIsDashboard = () => {
                       <h3 className="text-3xl font-bold text-foreground mb-1">
                         {dimensionKPIs.length}
                       </h3>
-                      <p className="text-muted-foreground text-sm">Total Indicadores</p>
+                      <p className="text-muted-foreground text-sm">Total indicadores</p>
                     </Card>
 
                     {topKPIs.slice(0, 3).map((kpi, idx) => (
@@ -296,7 +338,7 @@ const KPIsDashboard = () => {
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-xl font-semibold text-foreground flex items-center">
                           <dimension.icon className={`h-5 w-5 mr-2 ${dimension.color}`} />
-                          Distribución por Categoría
+                          Distribución por categoría
                         </h3>
                         <Button variant="outline" size="sm">
                           <Download className="h-4 w-4 mr-2" />
@@ -335,7 +377,7 @@ const KPIsDashboard = () => {
                       <div className="flex items-center justify-between mb-6">
                         <h3 className="text-xl font-semibold text-foreground flex items-center">
                           <TrendingUp className={`h-5 w-5 mr-2 ${dimension.color}`} />
-                          Volumen de Inversión por Startup
+                          Volumen de inversión por startup
                         </h3>
                         <Button variant="outline" size="sm">
                           <Download className="h-4 w-4 mr-2" />
@@ -373,12 +415,72 @@ const KPIsDashboard = () => {
                     </Card>
                   </div>
 
+                  {/* Gráfico de radar */}
+                  <Card className="p-6 bg-gradient-card border-0">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-semibold text-foreground flex items-center">
+                        <dimension.icon className={`h-5 w-5 mr-2 ${dimension.color}`} />
+                        Análisis por subdimensión
+                      </h3>
+                      <Button variant="outline" size="sm">
+                        <Download className="h-4 w-4 mr-2" />
+                        Exportar
+                      </Button>
+                    </div>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <RadarChart data={getRadarChartData(dimensionKPIs)}>
+                        <PolarGrid stroke="hsl(var(--muted))" />
+                        <PolarAngleAxis 
+                          dataKey="subdimension" 
+                          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                        />
+                        <PolarRadiusAxis 
+                          angle={90} 
+                          domain={[0, 100]}
+                          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                        />
+                        <Radar
+                          name="Total"
+                          dataKey="Total"
+                          stroke="hsl(var(--primary))"
+                          fill="hsl(var(--primary))"
+                          fillOpacity={0.6}
+                        />
+                        <Radar
+                          name="Activos"
+                          dataKey="Activos"
+                          stroke="hsl(var(--success))"
+                          fill="hsl(var(--success))"
+                          fillOpacity={0.4}
+                        />
+                        <Radar
+                          name="Alta importancia"
+                          dataKey="Alta importancia"
+                          stroke="hsl(var(--destructive))"
+                          fill="hsl(var(--destructive))"
+                          fillOpacity={0.3}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: 'hsl(var(--card))', 
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend 
+                          wrapperStyle={{ paddingTop: '20px' }}
+                          iconType="circle"
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </Card>
+
                   {/* Lista con barras de progreso - Solo algunos indicadores */}
                   <Card className="p-6 bg-gradient-card border-0">
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="text-xl font-semibold text-foreground flex items-center">
                         <dimension.icon className={`h-5 w-5 mr-2 ${dimension.color}`} />
-                        Indicadores Destacados
+                        Indicadores destacados
                       </h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -401,7 +503,7 @@ const KPIsDashboard = () => {
                   {/* Detalles de todos los indicadores */}
                   <div>
                     <h3 className="text-2xl font-bold text-foreground mb-6">
-                      Todos los Indicadores - {dimension.name}
+                      Todos los indicadores - {dimension.name}
                     </h3>
                     <div className="grid gap-6">
                       {dimensionKPIs.map((kpi, index) => (
