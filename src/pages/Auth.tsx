@@ -107,7 +107,7 @@ const Auth = () => {
         <Card className="bg-background/95 backdrop-blur-sm border-border/50 shadow-strong">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Valencia Digital
+              Brainnova
             </CardTitle>
             <CardDescription>
               Accede a la plataforma del ecosistema digital valenciano

@@ -45,7 +45,7 @@ const FooterSection = () => {
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Valencia Digital</h3>
+                <h3 className="text-lg font-bold text-foreground">Brainnova</h3>
                 <p className="text-sm text-muted-foreground">Ecosistema de Innovación</p>
               </div>
             </div>
@@ -136,7 +136,7 @@ const FooterSection = () => {
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-muted-foreground">
-            © 2024 Valencia Digital Ecosystem. Todos los derechos reservados.
+            © 2024 Brainnova Ecosystem. Todos los derechos reservados.
           </div>
           <div className="flex space-x-6 text-sm">
             <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">

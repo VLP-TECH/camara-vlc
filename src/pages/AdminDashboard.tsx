@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Users, UserCheck, UserX, Shield, Plus, Edit } from 'lucide-react';
+import { Users, UserCheck, UserX, Shield, Plus, Edit, Database, Play, RefreshCw, Activity } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import NavigationHeader from '@/components/NavigationHeader';
+import FooterSection from '@/components/FooterSection';
 interface Profile {
   id: string;
   user_id: string;
@@ -192,12 +194,14 @@ const AdminDashboard = () => {
   const pendingUsers = profiles.filter(p => !p.active).length;
   const adminUsers = profiles.filter(p => p.role === 'admin').length;
   const editorUsers = profiles.filter(p => p.role === 'editor').length;
+
   return <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-8">
+      <NavigationHeader />
+      <div className="container mx-auto py-8 pt-24">
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Dashboard de administración</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Gestión de usuarios</h1>
               <p className="text-muted-foreground">
                 Gestiona usuarios y permisos de acceso al sistema
               </p>
@@ -402,6 +406,7 @@ const AdminDashboard = () => {
           </CardContent>
         </Card>
       </div>
+      <FooterSection />
     </div>;
 };
 export default AdminDashboard;

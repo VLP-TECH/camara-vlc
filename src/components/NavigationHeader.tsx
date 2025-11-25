@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Menu, X, BarChart3, FileText, MessageSquare, Database, LogOut, Shield } from "lucide-react";
+import { Menu, X, BarChart3, FileText, MessageSquare, Database, LogOut, Shield, TrendingUp, Target } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -18,6 +18,9 @@ const NavigationHeader = () => {
     { icon: FileText, label: "Informes", href: "#reports" },
     { icon: MessageSquare, label: "Encuestas", href: "/encuestas" },
     { icon: Database, label: "Datos Abiertos", href: "/datos-abiertos" },
+    { icon: TrendingUp, label: "Tendencias", href: "/tendencias" },
+    { icon: Target, label: "Brainnova score", href: "/brainnova-score" },
+    ...(roles.isAdmin ? [{ icon: Shield, label: "Administración", href: "/config" }] : []),
   ];
 
   const handleSignOut = async () => {
@@ -59,7 +62,7 @@ const NavigationHeader = () => {
               <BarChart3 className="h-6 w-6 text-white" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-foreground">Valencia Digital</h1>
+              <h1 className="text-xl font-bold text-foreground">Brainnova</h1>
               <p className="text-sm text-muted-foreground">Ecosistema de Innovación</p>
             </div>
           </div>
@@ -91,7 +94,7 @@ const NavigationHeader = () => {
               <Button 
                 variant="outline" 
                 size="sm"
-                onClick={() => navigate('/admin')}
+                onClick={() => navigate('/admin-usuarios')}
                 className="flex items-center space-x-2"
               >
                 <Shield className="h-4 w-4" />
@@ -164,7 +167,7 @@ const NavigationHeader = () => {
                   size="sm" 
                   className="w-full flex items-center space-x-2"
                   onClick={() => {
-                    navigate('/admin');
+                    navigate('/admin-usuarios');
                     setIsMenuOpen(false);
                   }}
                 >

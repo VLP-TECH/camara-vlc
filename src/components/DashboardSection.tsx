@@ -236,7 +236,7 @@ const DashboardSection = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Administra roles y permisos de usuarios
                 </p>
-                <Button variant="outline" size="sm" className="w-full" onClick={() => window.location.href = '/admin'}>
+                <Button variant="outline" size="sm" className="w-full" onClick={() => window.location.href = '/admin-usuarios'}>
                   Acceder
                 </Button>
               </Card>
