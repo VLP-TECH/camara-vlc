@@ -21,6 +21,7 @@ import {
 } from "recharts";
 import NavigationHeader from "@/components/NavigationHeader";
 import FooterSection from "@/components/FooterSection";
+import { BackendStatus } from "@/components/BackendStatus";
 import { TrendingUp, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import {
@@ -154,8 +155,8 @@ const Tendencias = () => {
   // Preparar datos para el gráfico
   const datosGrafico = resultados?.map((item) => ({
     periodo: item.periodo,
-    valor: item.valor,
-  })) || [];
+    valor: typeof item.valor === 'number' ? item.valor : parseFloat(item.valor) || 0,
+  })).sort((a, b) => a.periodo - b.periodo) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,6 +175,9 @@ const Tendencias = () => {
             </p>
           </div>
 
+          {/* Estado del backend */}
+          <BackendStatus />
+
           {/* Filtros */}
           <Card className="p-6 mb-8 bg-gradient-card border-0">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -191,11 +195,21 @@ const Tendencias = () => {
                     <SelectValue placeholder="Selecciona un indicador" />
                   </SelectTrigger>
                   <SelectContent>
-                    {indicadores?.map((indicador) => (
-                      <SelectItem key={indicador} value={indicador}>
-                        {indicador}
+                    {loadingIndicadores ? (
+                      <SelectItem value="loading" disabled>
+                        Cargando indicadores...
                       </SelectItem>
-                    ))}
+                    ) : indicadores && indicadores.length > 0 ? (
+                      indicadores.map((indicador) => (
+                        <SelectItem key={indicador} value={indicador}>
+                          {indicador}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-data" disabled>
+                        No hay indicadores disponibles
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -218,11 +232,21 @@ const Tendencias = () => {
                     <SelectValue placeholder="Selecciona un país" />
                   </SelectTrigger>
                   <SelectContent>
-                    {filtrosPorIndicador?.paises?.map((pais) => (
-                      <SelectItem key={pais} value={pais}>
-                        {pais}
+                    {loadingFiltrosIndicador ? (
+                      <SelectItem value="loading" disabled>
+                        Cargando países...
                       </SelectItem>
-                    ))}
+                    ) : filtrosPorIndicador?.paises && filtrosPorIndicador.paises.length > 0 ? (
+                      filtrosPorIndicador.paises.map((pais) => (
+                        <SelectItem key={pais} value={pais}>
+                          {pais}
+                        </SelectItem>
+                      ))
+                    ) : indicadorSeleccionado ? (
+                      <SelectItem value="no-data" disabled>
+                        No hay países disponibles
+                      </SelectItem>
+                    ) : null}
                   </SelectContent>
                 </Select>
               </div>
@@ -318,11 +342,16 @@ const Tendencias = () => {
             ) : datosGrafico.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-96">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-center">
                   {indicadorSeleccionado && paisSeleccionado
-                    ? "No hay datos disponibles para los filtros seleccionados"
+                    ? "No hay datos disponibles para los filtros seleccionados. Intenta con otros filtros o verifica que el backend esté corriendo."
                     : "Selecciona un indicador y un país para ver el gráfico"}
                 </p>
+                {indicadorSeleccionado && paisSeleccionado && (
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Backend: {import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'}
+                  </p>
+                )}
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={400}>
@@ -347,7 +376,8 @@ const Tendencias = () => {
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     name="Valor"
-                    dot={{ fill: "hsl(var(--primary))" }}
+                    dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                    activeDot={{ r: 6 }}
                   />
                 </LineChart>
               </ResponsiveContainer>

@@ -144,18 +144,23 @@ export const getResultados = async (params: {
 export const calculateBrainnovaScore = async (
   data: BrainnovaScoreRequest
 ): Promise<BrainnovaScoreResponse> => {
-  const response = await fetch(buildUrl('/api/v1/brainnova-score'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  });
-  
-  if (!response.ok) {
-    await handleApiError(response);
+  try {
+    const response = await fetch(buildUrl('/api/v1/brainnova-score'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    
+    if (!response.ok) {
+      await handleApiError(response);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error('Error calculating Brainnova score:', error);
+    throw error;
   }
-  
-  return response.json();
 };
 

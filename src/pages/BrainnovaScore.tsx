@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import NavigationHeader from "@/components/NavigationHeader";
 import FooterSection from "@/components/FooterSection";
+import { BackendStatus } from "@/components/BackendStatus";
 import {
   Target,
   Loader2,
@@ -154,6 +155,9 @@ const BrainnovaScore = () => {
             </p>
           </div>
 
+          {/* Estado del backend */}
+          <BackendStatus />
+
           {/* Formulario de filtros */}
           <Card className="p-6 mb-8 bg-gradient-card border-0">
             <h3 className="text-xl font-semibold text-foreground mb-6 flex items-center">
@@ -176,11 +180,21 @@ const BrainnovaScore = () => {
                     <SelectValue placeholder="Selecciona un país" />
                   </SelectTrigger>
                   <SelectContent>
-                    {filtrosIniciales?.paises?.map((pais) => (
-                      <SelectItem key={pais} value={pais}>
-                        {pais}
+                    {loadingFiltrosIniciales ? (
+                      <SelectItem value="loading" disabled>
+                        Cargando países...
                       </SelectItem>
-                    ))}
+                    ) : filtrosIniciales?.paises && filtrosIniciales.paises.length > 0 ? (
+                      filtrosIniciales.paises.map((pais) => (
+                        <SelectItem key={pais} value={pais}>
+                          {pais}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-data" disabled>
+                        No hay países disponibles
+                      </SelectItem>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
@@ -398,7 +412,21 @@ const BrainnovaScore = () => {
                       ? errorCalculo.message
                       : "Ocurrió un error al calcular el score"}
                   </p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Verifica que el backend esté corriendo en {import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'}
+                  </p>
                 </div>
+              </div>
+            </Card>
+          )}
+
+          {!resultadoScore && !errorCalculo && !calculando && (
+            <Card className="p-6 bg-muted/50 border-0">
+              <div className="flex flex-col items-center justify-center py-12">
+                <Calculator className="h-16 w-16 text-muted-foreground mb-4" />
+                <p className="text-muted-foreground text-center">
+                  Completa los campos requeridos y haz clic en "Calcular score" para ver los resultados
+                </p>
               </div>
             </Card>
           )}

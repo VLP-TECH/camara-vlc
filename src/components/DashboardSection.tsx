@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -12,18 +14,63 @@ import {
   GraduationCap,
   Euro,
   ArrowUpRight,
-  Download
+  Download,
+  Loader2,
+  Database
 } from "lucide-react";
+import {
+  getDashboardStats,
+  getLatestIndicatorValues,
+  getTopIndicators,
+  getIndicatorTrend,
+} from "@/lib/dashboard-data";
 
 const DashboardSection = () => {
-  const { permissions, loading, roles } = usePermissions();
+  const { permissions, loading: permissionsLoading, roles } = usePermissions();
+  const [selectedPais] = useState("España");
   
-  if (loading) {
+  // Obtener estadísticas del dashboard
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: getDashboardStats,
+    refetchInterval: 60000, // Actualizar cada minuto
+  });
+
+  // Obtener valores más recientes de indicadores
+  const { data: latestValues, isLoading: valuesLoading } = useQuery({
+    queryKey: ["latest-indicator-values", selectedPais],
+    queryFn: () => getLatestIndicatorValues(selectedPais),
+    refetchInterval: 60000,
+  });
+
+  // Obtener indicadores más importantes
+  const { data: topIndicators, isLoading: topIndicatorsLoading } = useQuery({
+    queryKey: ["top-indicators"],
+    queryFn: () => getTopIndicators(4),
+  });
+
+  // Obtener tendencias de indicadores clave
+  const { data: skillsTrend } = useQuery({
+    queryKey: ["indicator-trend", "Personas con habilidades digitales básicas", selectedPais],
+    queryFn: () => getIndicatorTrend("Personas con habilidades digitales básicas", selectedPais, 5),
+    enabled: !!selectedPais,
+  });
+
+  const { data: connectivityTrend } = useQuery({
+    queryKey: ["indicator-trend", "Adopción de banda ancha fija", selectedPais],
+    queryFn: () => getIndicatorTrend("Adopción de banda ancha fija (suscripciones/100 personas)", selectedPais, 5),
+    enabled: !!selectedPais,
+  });
+
+  const isLoading = permissionsLoading || statsLoading || valuesLoading || topIndicatorsLoading;
+
+  if (isLoading) {
     return (
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-muted-foreground">Cargando...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Cargando datos del dashboard...</p>
           </div>
         </div>
       </section>
@@ -47,58 +94,111 @@ const DashboardSection = () => {
     );
   }
 
+  // Preparar indicadores con datos reales
   const indicators = [
     {
-      title: "Índice DESI Valencia",
-      value: "68.2",
-      change: "+5.3%",
-      trend: "up",
-      icon: TrendingUp,
+      title: "Total Indicadores",
+      value: stats?.totalIndicadores?.toLocaleString() || "0",
+      change: "",
+      trend: "up" as const,
+      icon: Database,
       color: "text-success",
       bgColor: "bg-success/10"
     },
     {
-      title: "Empresas TIC",
-      value: "2,547",
-      change: "+12.8%",
-      trend: "up",
-      icon: Building,
+      title: "Total Resultados",
+      value: stats?.totalResultados?.toLocaleString() || "0",
+      change: "",
+      trend: "up" as const,
+      icon: TrendingUp,
       color: "text-primary",
       bgColor: "bg-primary/10"
     },
     {
-      title: "Empleados Sector Digital",
-      value: "124,650",
-      change: "+8.9%",
-      trend: "up",
-      icon: Users,
+      title: "Dimensiones",
+      value: stats?.totalDimensiones?.toString() || "0",
+      change: "",
+      trend: "up" as const,
+      icon: Building,
       color: "text-accent",
       bgColor: "bg-accent/10"
     },
     {
-      title: "Facturación Digital",
-      value: "€8.5B",
-      change: "+15.2%",
-      trend: "up",
-      icon: Euro,
+      title: "Datos Crudos",
+      value: stats?.totalDatosCrudos?.toLocaleString() || "0",
+      change: "",
+      trend: "up" as const,
+      icon: Database,
       color: "text-secondary",
       bgColor: "bg-secondary/10"
     }
   ];
 
-  const digitalSkills = [
-    { skill: "Competencias Básicas", percentage: 78, color: "bg-success" },
-    { skill: "Competencias Avanzadas", percentage: 45, color: "bg-primary" },
-    { skill: "Especialistas TIC", percentage: 62, color: "bg-accent" },
-    { skill: "Graduados STEM", percentage: 38, color: "bg-secondary" }
-  ];
+  // Obtener valores reales de indicadores clave si están disponibles
+  const habilidadesBasicas = latestValues?.find(
+    (v) => v.nombre === "Personas con habilidades digitales básicas"
+  );
+  const habilidadesAvanzadas = latestValues?.find(
+    (v) => v.nombre === "Personas con habilidades digitales generales superiores a las básicas"
+  );
+  const empresasTIC = latestValues?.find(
+    (v) => v.nombre === "Número de empresas que realizan I+D en el sector TIC"
+  );
+  const bandaAncha = latestValues?.find(
+    (v) => v.nombre === "Adopción de banda ancha fija (suscripciones/100 personas)"
+  );
 
+  // Preparar datos de competencias digitales con datos reales
+  const digitalSkills = [
+    { 
+      skill: "Competencias Básicas", 
+      percentage: habilidadesBasicas ? Math.round(habilidadesBasicas.valor) : 0, 
+      color: "bg-success",
+      valor: habilidadesBasicas?.valor || 0
+    },
+    { 
+      skill: "Competencias Avanzadas", 
+      percentage: habilidadesAvanzadas ? Math.round(habilidadesAvanzadas.valor) : 0, 
+      color: "bg-primary",
+      valor: habilidadesAvanzadas?.valor || 0
+    },
+    { 
+      skill: "Empresas TIC I+D", 
+      percentage: empresasTIC ? Math.min(Math.round(empresasTIC.valor / 10), 100) : 0, 
+      color: "bg-accent",
+      valor: empresasTIC?.valor || 0
+    },
+    { 
+      skill: "Banda Ancha Fija", 
+      percentage: bandaAncha ? Math.round(bandaAncha.valor) : 0, 
+      color: "bg-secondary",
+      valor: bandaAncha?.valor || 0
+    }
+  ].filter(skill => skill.percentage > 0 || skill.valor > 0);
+
+  // Preparar datos de conectividad con datos reales
   const connectivity = [
-    { metric: "Banda Ancha Fija", percentage: 89, target: 95 },
-    { metric: "Fibra Óptica", percentage: 76, target: 85 },
-    { metric: "5G Coverage", percentage: 42, target: 70 },
-    { metric: "Internet Móvil", percentage: 94, target: 98 }
-  ];
+    { 
+      metric: "Banda Ancha Fija", 
+      percentage: bandaAncha ? Math.round(bandaAncha.valor) : 0, 
+      target: 95 
+    },
+    { 
+      metric: "Competencias Básicas", 
+      percentage: habilidadesBasicas ? Math.round(habilidadesBasicas.valor) : 0, 
+      target: 80 
+    },
+    { 
+      metric: "Competencias Avanzadas", 
+      percentage: habilidadesAvanzadas ? Math.round(habilidadesAvanzadas.valor) : 0, 
+      target: 60 
+    },
+    { 
+      metric: "Empresas TIC", 
+      percentage: empresasTIC ? Math.min(Math.round(empresasTIC.valor / 10), 100) : 0, 
+      target: 100 
+    }
+  ].filter(item => item.percentage > 0);
 
   return (
     <section id="dashboard" className="py-20 bg-muted/30">
@@ -107,9 +207,17 @@ const DashboardSection = () => {
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Dashboard del Ecosistema Digital
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-6">
             Monitorización en tiempo real de los indicadores clave del desarrollo digital valenciano
           </p>
+          {stats && (
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+              <span>📊 {stats.totalIndicadores} indicadores</span>
+              <span>📈 {stats.totalResultados.toLocaleString()} resultados</span>
+              <span>📁 {stats.totalDimensiones} dimensiones</span>
+              <span>💾 {stats.totalDatosCrudos.toLocaleString()} datos crudos</span>
+            </div>
+          )}
         </div>
 
         {/* Key Indicators */}
@@ -120,13 +228,15 @@ const DashboardSection = () => {
                 <div className={`p-3 rounded-lg ${indicator.bgColor}`}>
                   <indicator.icon className={`h-6 w-6 ${indicator.color}`} />
                 </div>
-                <div className="flex items-center space-x-1 text-success">
-                  <ArrowUpRight className="h-4 w-4" />
-                  <span className="text-sm font-medium">{indicator.change}</span>
-                </div>
               </div>
               <h3 className="text-3xl font-bold text-foreground mb-1">{indicator.value}</h3>
               <p className="text-muted-foreground text-sm">{indicator.title}</p>
+              {indicator.change && (
+                <div className="flex items-center space-x-1 text-success mt-2">
+                  <ArrowUpRight className="h-4 w-4" />
+                  <span className="text-sm font-medium">{indicator.change}</span>
+                </div>
+              )}
             </Card>
           ))}
         </div>
@@ -148,15 +258,23 @@ const DashboardSection = () => {
               )}
             </div>
             <div className="space-y-4">
-              {digitalSkills.map((skill) => (
-                <div key={skill.skill} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-foreground font-medium">{skill.skill}</span>
-                    <span className="text-muted-foreground">{skill.percentage}%</span>
+              {digitalSkills.length > 0 ? (
+                digitalSkills.map((skill) => (
+                  <div key={skill.skill} className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-foreground font-medium">{skill.skill}</span>
+                      <span className="text-muted-foreground">
+                        {skill.percentage}% {skill.valor > 0 && `(${skill.valor.toFixed(1)})`}
+                      </span>
+                    </div>
+                    <Progress value={skill.percentage} className="h-2" />
                   </div>
-                  <Progress value={skill.percentage} className="h-2" />
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground text-sm text-center py-4">
+                  No hay datos disponibles de competencias digitales
+                </p>
+              )}
             </div>
           </Card>
 
@@ -175,21 +293,27 @@ const DashboardSection = () => {
               )}
             </div>
             <div className="space-y-4">
-              {connectivity.map((item) => (
-                <div key={item.metric} className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-foreground font-medium">{item.metric}</span>
-                    <span className="text-muted-foreground">{item.percentage}% / {item.target}%</span>
+              {connectivity.length > 0 ? (
+                connectivity.map((item) => (
+                  <div key={item.metric} className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-foreground font-medium">{item.metric}</span>
+                      <span className="text-muted-foreground">{item.percentage}% / {item.target}%</span>
+                    </div>
+                    <div className="relative">
+                      <Progress value={Math.min((item.percentage / item.target) * 100, 100)} className="h-2" />
+                      <div 
+                        className="absolute top-0 w-1 h-2 bg-warning" 
+                        style={{ left: `${(item.target / 100) * 100}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="relative">
-                    <Progress value={(item.percentage / item.target) * 100} className="h-2" />
-                    <div 
-                      className="absolute top-0 w-1 h-2 bg-warning" 
-                      style={{ left: `${(item.target / 100) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-muted-foreground text-sm text-center py-4">
+                  No hay datos disponibles de conectividad
+                </p>
+              )}
             </div>
           </Card>
         </div>
