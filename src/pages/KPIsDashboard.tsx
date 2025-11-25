@@ -152,24 +152,27 @@ const KPIsDashboard = () => {
   const getRadarChartData = (dimensionKPIs: IndicadorConDatos[]) => {
     // Usar datos reales de subdimensiones
     if (datosSubdimensiones && datosSubdimensiones.length > 0) {
-      const maxTotal = Math.max(
-        ...datosSubdimensiones.map((d) => d.totalIndicadores),
-        1
-      );
-
       return datosSubdimensiones
-        .map((item) => ({
-          subdimension:
-            item.subdimension.length > 20
-              ? item.subdimension.substring(0, 20) + "..."
-              : item.subdimension,
-          Total: Math.round((item.totalIndicadores / maxTotal) * 100),
-          "Con datos": Math.round((item.indicadoresConDatos / maxTotal) * 100),
-          "Sin datos": Math.round(
-            ((item.totalIndicadores - item.indicadoresConDatos) / maxTotal) * 100
-          ),
-        }))
-        .slice(0, 8);
+        .map((item) => {
+          const porcentajeConDatos = item.totalIndicadores > 0
+            ? Math.round((item.indicadoresConDatos / item.totalIndicadores) * 100)
+            : 0;
+          const porcentajeSinDatos = item.totalIndicadores > 0
+            ? Math.round(((item.totalIndicadores - item.indicadoresConDatos) / item.totalIndicadores) * 100)
+            : 0;
+          
+          return {
+            subdimension:
+              item.subdimension.length > 30
+                ? item.subdimension.substring(0, 30) + "..."
+                : item.subdimension,
+            "Cobertura": porcentajeConDatos,
+            "Sin datos": porcentajeSinDatos,
+            "Total indicadores": item.totalIndicadores,
+          };
+        })
+        .filter((item) => item["Total indicadores"] > 0) // Solo mostrar subdimensiones con indicadores
+        .slice(0, 10); // Mostrar hasta 10 subdimensiones
     }
 
     // Fallback: agrupar por subdimensión
@@ -194,20 +197,25 @@ const KPIsDashboard = () => {
       return acc;
     }, {} as Record<string, any>);
 
-    const maxTotal = Math.max(
-      ...Object.values(subdimensionData).map((d: any) => d.total),
-      1
-    );
-
     return Object.values(subdimensionData)
-      .map((item: any) => ({
-        subdimension:
-          item.name.length > 20 ? item.name.substring(0, 20) + "..." : item.name,
-        Total: Math.round((item.total / maxTotal) * 100),
-        "Con datos": Math.round((item.conDatos / maxTotal) * 100),
-        "Alta importancia": Math.round((item.altaImportancia / maxTotal) * 100),
-      }))
-      .slice(0, 8);
+      .map((item: any) => {
+        const porcentajeConDatos = item.total > 0
+          ? Math.round((item.conDatos / item.total) * 100)
+          : 0;
+        const porcentajeSinDatos = item.total > 0
+          ? Math.round(((item.total - item.conDatos) / item.total) * 100)
+          : 0;
+        
+        return {
+          subdimension:
+            item.name.length > 30 ? item.name.substring(0, 30) + "..." : item.name,
+          "Cobertura": porcentajeConDatos,
+          "Sin datos": porcentajeSinDatos,
+          "Total indicadores": item.total,
+        };
+      })
+      .filter((item: any) => item["Total indicadores"] > 0)
+      .slice(0, 10);
   };
 
   const COLORS = [
@@ -481,31 +489,27 @@ const KPIsDashboard = () => {
                       </Button>
                     </div>
                     {getRadarChartData(dimensionKPIs).length > 0 ? (
-                      <ResponsiveContainer width="100%" height={400}>
+                      <ResponsiveContainer width="100%" height={450}>
                         <RadarChart data={getRadarChartData(dimensionKPIs)}>
                         <PolarGrid stroke="hsl(var(--muted))" />
                         <PolarAngleAxis 
                           dataKey="subdimension" 
-                          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                          tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                          style={{ textTransform: 'capitalize' }}
                         />
                         <PolarRadiusAxis 
                           angle={90} 
                           domain={[0, 100]}
                           tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                          tickFormatter={(value) => `${value}%`}
                         />
                         <Radar
-                          name="Total"
-                          dataKey="Total"
-                          stroke="hsl(var(--primary))"
-                          fill="hsl(var(--primary))"
-                          fillOpacity={0.6}
-                        />
-                        <Radar
-                          name="Con datos"
-                          dataKey="Con datos"
+                          name="Cobertura de datos"
+                          dataKey="Cobertura"
                           stroke="hsl(var(--success))"
                           fill="hsl(var(--success))"
-                          fillOpacity={0.4}
+                          fillOpacity={0.6}
+                          strokeWidth={2}
                         />
                         <Radar
                           name="Sin datos"
@@ -513,22 +517,37 @@ const KPIsDashboard = () => {
                           stroke="hsl(var(--destructive))"
                           fill="hsl(var(--destructive))"
                           fillOpacity={0.3}
+                          strokeWidth={2}
                         />
                         <Tooltip 
                           contentStyle={{ 
                             backgroundColor: 'hsl(var(--card))', 
                             border: '1px solid hsl(var(--border))',
-                            borderRadius: '8px'
+                            borderRadius: '8px',
+                            padding: '8px 12px'
+                          }}
+                          formatter={(value: any, name: string, props: any) => {
+                            if (name === "Cobertura de datos" || name === "Sin datos") {
+                              return [`${value}%`, name];
+                            }
+                            if (name === "Total indicadores") {
+                              return [`${value} indicadores`, name];
+                            }
+                            return [value, name];
                           }}
                         />
                         <Legend 
                           wrapperStyle={{ paddingTop: '20px' }}
                           iconType="circle"
+                          formatter={(value) => {
+                            if (value === "Cobertura de datos") return "Cobertura";
+                            return value;
+                          }}
                         />
                       </RadarChart>
                     </ResponsiveContainer>
                     ) : (
-                      <div className="flex items-center justify-center h-[400px]">
+                      <div className="flex items-center justify-center h-[450px]">
                         <p className="text-muted-foreground">No hay datos para mostrar</p>
                       </div>
                     )}

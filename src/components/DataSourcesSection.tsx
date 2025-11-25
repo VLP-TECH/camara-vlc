@@ -1,6 +1,15 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { usePermissions } from "@/hooks/usePermissions";
 import { 
   Database, 
@@ -11,19 +20,63 @@ import {
   AlertCircle,
   ExternalLink,
   RefreshCw,
-  Upload,
-  Plus
+  Loader2,
+  Calendar,
+  FileText,
+  TrendingUp
 } from "lucide-react";
+import { getDataSources, getDataSourcesStats, type DataSource } from "@/lib/data-sources";
+import { supabase } from "@/integrations/supabase/client";
 
 const DataSourcesSection = () => {
   const { permissions, loading } = usePermissions();
+  const [selectedSource, setSelectedSource] = useState<DataSource | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  if (loading) {
+  // Obtener fuentes de datos reales
+  const { data: dataSources, isLoading: loadingSources } = useQuery({
+    queryKey: ["data-sources"],
+    queryFn: getDataSources,
+    refetchInterval: 300000, // Actualizar cada 5 minutos
+  });
+
+  // Obtener estadísticas de fuentes
+  const { data: stats } = useQuery({
+    queryKey: ["data-sources-stats"],
+    queryFn: getDataSourcesStats,
+    refetchInterval: 300000,
+  });
+
+  // Obtener indicadores detallados de la fuente seleccionada
+  const { data: sourceIndicators } = useQuery({
+    queryKey: ["source-indicators", selectedSource?.nombre],
+    queryFn: async () => {
+      if (!selectedSource) return [];
+      
+      const { data, error } = await supabase
+        .from("definicion_indicadores")
+        .select("nombre, importancia, formula, origen_indicador, nombre_subdimension")
+        .eq("fuente", selectedSource.nombre)
+        .order("nombre");
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!selectedSource && isDialogOpen,
+  });
+
+  const handleViewDetails = (source: DataSource) => {
+    setSelectedSource(source);
+    setIsDialogOpen(true);
+  };
+
+  if (loading || loadingSources) {
     return (
       <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-muted-foreground">Cargando...</p>
+            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Cargando fuentes de datos...</p>
           </div>
         </div>
       </section>
@@ -47,48 +100,32 @@ const DataSourcesSection = () => {
     );
   }
 
-  const dataSources = [
-    {
-      name: "Instituto Nacional de Estadística (INE)",
-      type: "Oficial",
-      status: "active",
-      lastUpdate: "2024-01-15",
-      frequency: "Mensual",
-      indicators: ["Empresas TIC", "Empleo Digital", "Facturación"],
-      icon: BarChart3,
-      color: "bg-primary/10 text-primary"
-    },
-    {
-      name: "Eurostat - Digital Economy",
-      type: "Europeo",
-      status: "active",
-      lastUpdate: "2024-01-10",
-      frequency: "Trimestral",
-      indicators: ["DESI Index", "E-commerce", "Digital Skills"],
-      icon: Globe,
-      color: "bg-accent/10 text-accent"
-    },
-    {
-      name: "Red.es - Banda Ancha",
-      type: "Gubernamental",
-      status: "active",
-      lastUpdate: "2024-01-12",
-      frequency: "Mensual",
-      indicators: ["Cobertura Fibra", "Velocidades", "Penetración"],
-      icon: Zap,
-      color: "bg-success/10 text-success"
-    },
-    {
-      name: "Portal de Datos Abiertos GVA",
-      type: "Autonómico",
-      status: "maintenance",
-      lastUpdate: "2024-01-05",
-      frequency: "Semanal",
-      indicators: ["Startups", "Inversión", "Innovación"],
-      icon: Database,
-      color: "bg-secondary/10 text-secondary"
+  // Mapeo de iconos y colores según el tipo de fuente
+  const getSourceIcon = (tipo: string) => {
+    switch (tipo.toLowerCase()) {
+      case "europeo":
+        return Globe;
+      case "gubernamental":
+        return Zap;
+      case "autonómico":
+        return Database;
+      default:
+        return BarChart3;
     }
-  ];
+  };
+
+  const getSourceColor = (tipo: string) => {
+    switch (tipo.toLowerCase()) {
+      case "europeo":
+        return "bg-accent/10 text-accent";
+      case "gubernamental":
+        return "bg-success/10 text-success";
+      case "autonómico":
+        return "bg-secondary/10 text-secondary";
+      default:
+        return "bg-primary/10 text-primary";
+    }
+  };
 
   const integrationMethods = [
     {
@@ -130,77 +167,233 @@ const DataSourcesSection = () => {
                 Infraestructura técnica para la captura, procesamiento y almacenamiento automatizado 
                 de datos del ecosistema digital valenciano
               </p>
+              {stats && (
+                <div className="flex flex-wrap gap-4 mt-4 text-sm text-muted-foreground">
+                  <span>📊 {stats.totalFuentes} fuentes</span>
+                  <span>📈 {stats.totalIndicadores} indicadores</span>
+                  <span>💾 {stats.totalResultados.toLocaleString()} resultados</span>
+                  <span>✅ {stats.fuentesActivas} activas</span>
+                </div>
+              )}
             </div>
-            {permissions.canUploadDataSources && (
-              <div className="mt-4 lg:mt-0">
-                <Button size="lg" className="mr-2">
-                  <Plus className="mr-2 h-5 w-5" />
-                  Nueva Fuente
-                </Button>
-                <Button variant="outline" size="lg">
-                  <Upload className="mr-2 h-5 w-5" />
-                  Subir Datos
-                </Button>
-              </div>
-            )}
           </div>
         </div>
 
         {/* Data Sources Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {dataSources.map((source) => (
-            <Card key={source.name} className="p-6 hover:shadow-medium transition-all duration-300 bg-gradient-card border-0">
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3 rounded-lg ${source.color}`}>
-                  <source.icon className="h-6 w-6" />
-                </div>
-                <div className="flex items-center space-x-2">
-                  {source.status === 'active' ? (
-                    <CheckCircle className="h-5 w-5 text-success" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 text-warning" />
-                  )}
-                  <Badge variant={source.status === 'active' ? 'default' : 'secondary'}>
-                    {source.status === 'active' ? 'Activo' : 'Mantenimiento'}
-                  </Badge>
-                </div>
-              </div>
+        {dataSources && dataSources.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            {dataSources.map((source) => {
+              const Icon = getSourceIcon(source.tipo);
+              const color = getSourceColor(source.tipo);
               
-              <h3 className="text-lg font-semibold text-foreground mb-2">{source.name}</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Tipo: {source.type} • Actualización: {source.frequency}
-              </p>
-              
-              <div className="space-y-2 mb-4">
-                <div className="text-xs text-muted-foreground">
-                  Última actualización: {new Date(source.lastUpdate).toLocaleDateString('es-ES')}
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  {source.indicators.map((indicator) => (
-                    <Badge key={indicator} variant="outline" className="text-xs">
-                      {indicator}
+              return (
+                <Card key={source.nombre} className="p-6 hover:shadow-medium transition-all duration-300 bg-gradient-card border-0">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`p-3 rounded-lg ${color}`}>
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {source.status === 'active' ? (
+                        <CheckCircle className="h-5 w-5 text-success" />
+                      ) : (
+                        <AlertCircle className="h-5 w-5 text-warning" />
+                      )}
+                      <Badge variant={source.status === 'active' ? 'default' : 'secondary'}>
+                        {source.status === 'active' ? 'Activo' : 'Mantenimiento'}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{source.nombre}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Tipo: {source.tipo} • Actualización: {source.frecuencia}
+                  </p>
+                  
+                  <div className="space-y-2 mb-4">
+                    <div className="text-xs text-muted-foreground">
+                      Última actualización: {new Date(source.ultimaActualizacion).toLocaleDateString('es-ES')}
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>{source.totalIndicadores} indicadores</span>
+                      <span>•</span>
+                      <span>{source.totalResultados.toLocaleString()} resultados</span>
+                    </div>
+                    {source.indicadores.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {source.indicadores.map((indicator, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            {indicator.length > 30 ? indicator.substring(0, 30) + "..." : indicator}
+                          </Badge>
+                        ))}
+                        {source.totalIndicadores > source.indicadores.length && (
+                          <Badge variant="outline" className="text-xs">
+                            +{source.totalIndicadores - source.indicadores.length} más
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => handleViewDetails(source)}
+                    >
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ver detalles
+                    </Button>
+                    {permissions.canUploadDataSources && (
+                      <Button variant="outline" size="sm">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Actualizar
+                      </Button>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <Card className="p-12 text-center bg-gradient-card border-0 mb-12">
+            <Database className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <p className="text-muted-foreground mb-4">
+              No hay fuentes de datos disponibles en este momento
+            </p>
+          </Card>
+        )}
+
+        {/* Dialog para detalles de fuente */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            {selectedSource && (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-2xl flex items-center gap-2">
+                    {(() => {
+                      const Icon = getSourceIcon(selectedSource.tipo);
+                      const color = getSourceColor(selectedSource.tipo);
+                      return (
+                        <div className={`p-2 rounded-lg ${color}`}>
+                          <Icon className="h-6 w-6" />
+                        </div>
+                      );
+                    })()}
+                    {selectedSource.nombre}
+                  </DialogTitle>
+                  <DialogDescription className="text-base">
+                    Información detallada sobre esta fuente de datos
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-6 mt-4">
+                  {/* Información general */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card className="p-4 bg-muted/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Tipo</span>
+                      </div>
+                      <p className="text-lg font-semibold">{selectedSource.tipo}</p>
+                    </Card>
+                    <Card className="p-4 bg-muted/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Indicadores</span>
+                      </div>
+                      <p className="text-lg font-semibold">{selectedSource.totalIndicadores}</p>
+                    </Card>
+                    <Card className="p-4 bg-muted/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Database className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Resultados</span>
+                      </div>
+                      <p className="text-lg font-semibold">{selectedSource.totalResultados.toLocaleString()}</p>
+                    </Card>
+                    <Card className="p-4 bg-muted/50">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Última actualización</span>
+                      </div>
+                      <p className="text-lg font-semibold">
+                        {new Date(selectedSource.ultimaActualizacion).toLocaleDateString('es-ES')}
+                      </p>
+                    </Card>
+                  </div>
+
+                  {/* Estado y frecuencia */}
+                  <div className="flex items-center gap-4">
+                    <Badge variant={selectedSource.status === 'active' ? 'default' : 'secondary'} className="text-sm">
+                      {selectedSource.status === 'active' ? (
+                        <>
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Activo
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          Mantenimiento
+                        </>
+                      )}
                     </Badge>
-                  ))}
+                    <span className="text-sm text-muted-foreground">
+                      Frecuencia: {selectedSource.frecuencia}
+                    </span>
+                  </div>
+
+                  {/* Lista de indicadores */}
+                  <div>
+                    <h4 className="text-lg font-semibold mb-4">Indicadores ({selectedSource.totalIndicadores})</h4>
+                    {sourceIndicators && sourceIndicators.length > 0 ? (
+                      <div className="space-y-2 max-h-96 overflow-y-auto">
+                        {sourceIndicators.map((indicator, idx) => (
+                          <Card key={idx} className="p-4 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <p className="font-medium text-foreground mb-1">{indicator.nombre}</p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {indicator.importancia && (
+                                    <Badge 
+                                      variant={
+                                        indicator.importancia.toLowerCase().includes('alta') ? 'default' : 
+                                        indicator.importancia.toLowerCase().includes('media') ? 'secondary' : 
+                                        'outline'
+                                      }
+                                      className="text-xs"
+                                    >
+                                      {indicator.importancia}
+                                    </Badge>
+                                  )}
+                                  {indicator.origen_indicador && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {indicator.origen_indicador}
+                                    </Badge>
+                                  )}
+                                  {indicator.nombre_subdimension && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {indicator.nombre_subdimension}
+                                    </Badge>
+                                  )}
+                                </div>
+                                {indicator.formula && (
+                                  <p className="text-xs text-muted-foreground mt-2">
+                                    Fórmula: {indicator.formula}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-muted-foreground text-sm">Cargando indicadores...</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <Button variant="ghost" size="sm">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Ver detalles
-                </Button>
-                {permissions.canUploadDataSources && (
-                  <Button variant="outline" size="sm">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Actualizar
-                  </Button>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
-
-
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Technical Architecture */}
         <Card className="p-8 bg-gradient-card border-0">
