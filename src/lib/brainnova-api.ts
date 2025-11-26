@@ -32,20 +32,59 @@ const handleApiError = async (response: Response): Promise<never> => {
 /**
  * Obtiene la lista de indicadores disponibles
  * GET /api/v1/indicadores-disponibles
+ * Fallback a Supabase si el backend no está disponible
  */
 export const getIndicadoresDisponibles = async (): Promise<string[]> => {
   try {
-    const response = await fetch(buildUrl('/api/v1/indicadores-disponibles'));
+    const response = await fetch(buildUrl('/api/v1/indicadores-disponibles'), {
+      signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
+    });
     
     if (!response.ok) {
-      await handleApiError(response);
+      throw new Error(`Backend error: ${response.status}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    
+    // Si el backend devuelve datos, usarlos
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+    
+    // Si el backend devuelve array vacío, intentar desde Supabase
+    throw new Error('Backend returned empty data');
   } catch (error) {
-    console.error('Error fetching indicadores:', error);
-    // Retornar array vacío si hay error de conexión
-    return [];
+    console.warn('Error fetching indicadores from backend, trying Supabase fallback:', error);
+    
+    // Fallback: obtener indicadores que tienen datos desde Supabase
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // Obtener indicadores únicos que tienen resultados
+      const { data, error: supabaseError } = await supabase
+        .from('resultado_indicadores')
+        .select('nombre_indicador')
+        .not('nombre_indicador', 'is', null);
+      
+      if (supabaseError) {
+        console.error('Error fetching from Supabase:', supabaseError);
+        return [];
+      }
+      
+      if (!data || data.length === 0) {
+        return [];
+      }
+      
+      // Obtener nombres únicos de indicadores
+      const indicadoresUnicos = Array.from(
+        new Set(data.map(item => item.nombre_indicador).filter(Boolean))
+      ).sort();
+      
+      return indicadoresUnicos;
+    } catch (supabaseError) {
+      console.error('Error in Supabase fallback:', supabaseError);
+      return [];
+    }
   }
 };
 
@@ -103,6 +142,7 @@ export const getFiltrosGlobales = async (params?: {
 /**
  * Obtiene resultados históricos para el gráfico
  * GET /api/v1/resultados
+ * Fallback a Supabase si el backend no está disponible
  */
 export const getResultados = async (params: {
   nombre_indicador: string;
@@ -123,17 +163,70 @@ export const getResultados = async (params: {
     }
     
     const url = buildUrl(`/api/v1/resultados?${queryParams.toString()}`);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
+    });
     
     if (!response.ok) {
-      await handleApiError(response);
+      throw new Error(`Backend error: ${response.status}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    
+    // Si el backend devuelve datos, usarlos
+    if (Array.isArray(data) && data.length > 0) {
+      return data;
+    }
+    
+    // Si el backend devuelve array vacío, intentar desde Supabase
+    throw new Error('Backend returned empty data');
   } catch (error) {
-    console.error('Error fetching resultados:', error);
-    // Retornar array vacío si hay error de conexión
-    return [];
+    console.warn('Error fetching resultados from backend, trying Supabase fallback:', error);
+    
+    // Fallback: obtener datos directamente desde Supabase
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      let query = supabase
+        .from('resultado_indicadores')
+        .select('periodo, valor_calculado, pais, provincia, sector')
+        .eq('nombre_indicador', params.nombre_indicador)
+        .eq('pais', params.pais)
+        .order('periodo', { ascending: true });
+      
+      if (params.provincia) {
+        query = query.eq('provincia', params.provincia);
+      } else {
+        // Si no se especifica provincia, obtener datos nacionales (provincia null o vacía)
+        query = query.or('provincia.is.null,provincia.eq.');
+      }
+      
+      if (params.sector) {
+        query = query.eq('sector', params.sector);
+      }
+      
+      const { data, error: supabaseError } = await query;
+      
+      if (supabaseError) {
+        console.error('Error fetching from Supabase:', supabaseError);
+        return [];
+      }
+      
+      if (!data || data.length === 0) {
+        return [];
+      }
+      
+      // Mapear datos de Supabase al formato esperado
+      return data.map((item) => ({
+        periodo: item.periodo,
+        valor: typeof item.valor_calculado === 'number' 
+          ? item.valor_calculado 
+          : parseFloat(String(item.valor_calculado || 0)) || 0,
+      }));
+    } catch (supabaseError) {
+      console.error('Error in Supabase fallback:', supabaseError);
+      return [];
+    }
   }
 };
 

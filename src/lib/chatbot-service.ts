@@ -127,10 +127,169 @@ export async function getSurveyInfo(): Promise<any[]> {
 }
 
 /**
- * Obtiene información sobre KPIs
+ * Busca indicadores en la base de datos de Brainnova
+ */
+export async function searchIndicators(query: string): Promise<any[]> {
+  try {
+    const cleanQuery = query.replace(/[¿?¡!]/g, '').trim().toLowerCase();
+    const searchTerms = cleanQuery.split(/\s+/).filter(term => term.length > 2);
+    
+    if (searchTerms.length === 0) {
+      return [];
+    }
+
+    // Buscar en nombre de indicadores
+    const conditions = searchTerms.map(term => `nombre.ilike.%${term}%`).join(',');
+    
+    const { data, error } = await supabase
+      .from('definicion_indicadores')
+      .select('nombre, importancia, formula, fuente, origen_indicador, nombre_subdimension')
+      .or(conditions)
+      .limit(20);
+
+    if (error) {
+      console.error('Error searching indicators:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in searchIndicators:', error);
+    return [];
+  }
+}
+
+/**
+ * Obtiene información detallada de un indicador específico
+ */
+export async function getIndicatorDetails(nombreIndicador: string): Promise<any> {
+  try {
+    // Obtener información del indicador
+    const { data: indicador, error: indicadorError } = await supabase
+      .from('definicion_indicadores')
+      .select('nombre, importancia, formula, fuente, origen_indicador, nombre_subdimension')
+      .eq('nombre', nombreIndicador)
+      .single();
+
+    if (indicadorError || !indicador) {
+      return null;
+    }
+
+    // Obtener subdimensión y dimensión
+    const { data: subdimension } = await supabase
+      .from('subdimensiones')
+      .select('nombre, nombre_dimension')
+      .eq('nombre', indicador.nombre_subdimension)
+      .single();
+
+    // Obtener último valor
+    const { data: ultimoResultado } = await supabase
+      .from('resultado_indicadores')
+      .select('valor_calculado, periodo, pais')
+      .eq('nombre_indicador', nombreIndicador)
+      .order('periodo', { ascending: false })
+      .limit(1);
+
+    // Obtener total de resultados
+    const { count } = await supabase
+      .from('resultado_indicadores')
+      .select('id', { count: 'exact', head: true })
+      .eq('nombre_indicador', nombreIndicador);
+
+    return {
+      ...indicador,
+      dimension: subdimension?.nombre_dimension || '',
+      subdimension: indicador.nombre_subdimension,
+      ultimoValor: ultimoResultado?.[0]?.valor_calculado,
+      ultimoPeriodo: ultimoResultado?.[0]?.periodo,
+      ultimoPais: ultimoResultado?.[0]?.pais,
+      totalResultados: count || 0,
+    };
+  } catch (error) {
+    console.error('Error getting indicator details:', error);
+    return null;
+  }
+}
+
+/**
+ * Obtiene todos los indicadores disponibles
+ */
+export async function getAllIndicators(): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from('definicion_indicadores')
+      .select('nombre, importancia, nombre_subdimension')
+      .order('nombre')
+      .limit(100);
+
+    if (error) {
+      console.error('Error fetching all indicators:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getAllIndicators:', error);
+    return [];
+  }
+}
+
+/**
+ * Busca indicadores por dimensión
+ */
+export async function getIndicatorsByDimension(nombreDimension: string): Promise<any[]> {
+  try {
+    // Obtener subdimensiones de la dimensión
+    const { data: subdimensiones } = await supabase
+      .from('subdimensiones')
+      .select('nombre')
+      .eq('nombre_dimension', nombreDimension);
+
+    if (!subdimensiones || subdimensiones.length === 0) {
+      return [];
+    }
+
+    const nombresSubdimensiones = subdimensiones.map(s => s.nombre);
+
+    // Obtener indicadores de esas subdimensiones
+    const { data: indicadores, error } = await supabase
+      .from('definicion_indicadores')
+      .select('nombre, importancia, nombre_subdimension')
+      .in('nombre_subdimension', nombresSubdimensiones)
+      .order('nombre');
+
+    if (error) {
+      console.error('Error fetching indicators by dimension:', error);
+      return [];
+    }
+
+    return indicadores || [];
+  } catch (error) {
+    console.error('Error in getIndicatorsByDimension:', error);
+    return [];
+  }
+}
+
+/**
+ * Obtiene información sobre KPIs desde la base de datos real
  */
 export async function getKPIInfo(): Promise<KnowledgeItem[]> {
-  return searchKnowledge('kpi indicador métrica', 'kpi');
+  try {
+    const indicadores = await getAllIndicators();
+    
+    return indicadores.map((ind, idx) => ({
+      id: `kpi-${idx}`,
+      category: 'kpi',
+      title: ind.nombre,
+      content: `Indicador: ${ind.nombre}\nImportancia: ${ind.importancia || 'No especificada'}\nSubdimensión: ${ind.nombre_subdimension}`,
+      metadata: ind,
+      source: 'brainnova_database',
+      keywords: [ind.nombre.toLowerCase(), ind.nombre_subdimension?.toLowerCase()].filter(Boolean),
+    }));
+  } catch (error) {
+    console.error('Error in getKPIInfo:', error);
+    return [];
+  }
 }
 
 /**
@@ -152,12 +311,125 @@ export async function generateChatbotResponse(userQuery: string): Promise<string
     }
   }
   
-  // Detectar si pregunta sobre KPIs
-  if (lowerQuery.includes('kpi') || lowerQuery.includes('indicador') || lowerQuery.includes('métrica') || lowerQuery.includes('dato')) {
-    const kpiInfo = await getKPIInfo();
-    if (kpiInfo.length > 0) {
-      const kpiDetails = kpiInfo.slice(0, 3).map(k => `• ${k.title}: ${k.content.substring(0, 150)}...`).join('\n\n');
-      return `Información sobre KPIs e indicadores:\n\n${kpiDetails}\n\n¿Quieres más detalles sobre algún indicador específico?`;
+  // Detectar preguntas sobre dimensiones específicas
+  const dimensionesKeywords = ['dimensión', 'dimension', 'dimensiones'];
+  if (dimensionesKeywords.some(keyword => lowerQuery.includes(keyword))) {
+    try {
+      const { data: dimensiones } = await supabase
+        .from('dimensiones')
+        .select('nombre, peso')
+        .order('peso', { ascending: false });
+      
+      if (dimensiones && dimensiones.length > 0) {
+        // Buscar si pregunta por una dimensión específica
+        const dimensionMatch = dimensiones.find(dim => 
+          lowerQuery.includes(dim.nombre.toLowerCase())
+        );
+        
+        if (dimensionMatch) {
+          // Mostrar indicadores de esa dimensión
+          const indicadores = await getIndicatorsByDimension(dimensionMatch.nombre);
+          if (indicadores.length > 0) {
+            const lista = indicadores.slice(0, 10).map((ind, idx) => 
+              `${idx + 1}. **${ind.nombre}**${ind.importancia ? ` (${ind.importancia})` : ''}`
+            ).join('\n');
+            return `La dimensión **${dimensionMatch.nombre}** tiene ${indicadores.length} indicador(es):\n\n${lista}${indicadores.length > 10 ? `\n\n... y ${indicadores.length - 10} más.` : ''}\n\n¿Sobre cuál indicador te gustaría saber más detalles?`;
+          } else {
+            return `La dimensión **${dimensionMatch.nombre}** no tiene indicadores disponibles en este momento.`;
+          }
+        }
+        
+        // Si no pregunta por una específica, listar todas
+        const lista = dimensiones.map((dim, idx) => `${idx + 1}. **${dim.nombre}**`).join('\n');
+        return `Tenemos ${dimensiones.length} dimensiones en el sistema:\n\n${lista}\n\n¿Sobre qué dimensión te gustaría saber más? Puedo mostrarte los indicadores de cada una.`;
+      }
+    } catch (error) {
+      console.error('Error fetching dimensions:', error);
+    }
+  }
+  
+  // Detectar preguntas sobre valores específicos de indicadores
+  if (lowerQuery.includes('valor') || lowerQuery.includes('cuánto') || lowerQuery.includes('cuál es el valor') || lowerQuery.includes('qué valor tiene')) {
+    const indicadores = await searchIndicators(cleanQuery);
+    if (indicadores.length > 0) {
+      const detalle = await getIndicatorDetails(indicadores[0].nombre);
+      if (detalle && detalle.ultimoValor !== undefined && detalle.ultimoValor !== null) {
+        return `El valor más reciente del indicador **${detalle.nombre}** es **${detalle.ultimoValor}**${detalle.ultimoPeriodo ? ` (período ${detalle.ultimoPeriodo})` : ''}${detalle.ultimoPais ? ` para ${detalle.ultimoPais}` : ''}.\n\n${detalle.totalResultados > 0 ? `Tenemos ${detalle.totalResultados} resultados disponibles para este indicador.` : ''}`;
+      } else if (detalle) {
+        return `El indicador **${detalle.nombre}** está definido en el sistema pero no tiene valores calculados disponibles aún.\n\n${detalle.totalResultados > 0 ? `Sin embargo, tenemos ${detalle.totalResultados} registros en la base de datos.` : ''}`;
+      }
+    }
+  }
+  
+  // Detectar si pregunta sobre KPIs o indicadores específicos
+  if (lowerQuery.includes('kpi') || lowerQuery.includes('indicador') || lowerQuery.includes('métrica') || lowerQuery.includes('dato') || lowerQuery.includes('empresa') || lowerQuery.includes('persona') || lowerQuery.includes('digital') || lowerQuery.includes('inteligencia artificial') || lowerQuery.includes('big data') || lowerQuery.includes('banda ancha') || lowerQuery.includes('habilidad')) {
+    // Buscar indicadores que coincidan con la consulta
+    const indicadores = await searchIndicators(cleanQuery);
+    
+    if (indicadores.length > 0) {
+      // Si encuentra un indicador específico o muy pocos, dar detalles completos
+      if (indicadores.length === 1) {
+        const detalle = await getIndicatorDetails(indicadores[0].nombre);
+        if (detalle) {
+          let respuesta = `**${detalle.nombre}**\n\n`;
+          
+          if (detalle.dimension) {
+            respuesta += `📊 Dimensión: ${detalle.dimension}\n`;
+          }
+          if (detalle.subdimension) {
+            respuesta += `📈 Subdimensión: ${detalle.subdimension}\n`;
+          }
+          if (detalle.importancia) {
+            respuesta += `⭐ Importancia: ${detalle.importancia}\n`;
+          }
+          if (detalle.formula) {
+            respuesta += `🔢 Fórmula: ${detalle.formula}\n`;
+          }
+          if (detalle.fuente) {
+            respuesta += `📚 Fuente: ${detalle.fuente}\n`;
+          }
+          if (detalle.origen_indicador) {
+            respuesta += `📍 Origen: ${detalle.origen_indicador}\n`;
+          }
+          if (detalle.ultimoValor !== undefined && detalle.ultimoValor !== null) {
+            respuesta += `\n📊 Último valor: **${detalle.ultimoValor}**`;
+            if (detalle.ultimoPeriodo) {
+              respuesta += ` (período ${detalle.ultimoPeriodo})`;
+            }
+            if (detalle.ultimoPais) {
+              respuesta += ` - ${detalle.ultimoPais}`;
+            }
+          }
+          if (detalle.totalResultados > 0) {
+            respuesta += `\n\n💾 Total de resultados disponibles: ${detalle.totalResultados}`;
+          } else {
+            respuesta += `\n\n⚠️ Este indicador aún no tiene valores calculados en la base de datos.`;
+          }
+          
+          return respuesta;
+        }
+      }
+      
+      // Si encuentra varios, listarlos
+      if (indicadores.length <= 5) {
+        const lista = indicadores.map((ind, idx) => {
+          return `${idx + 1}. **${ind.nombre}**${ind.importancia ? ` (${ind.importancia})` : ''}`;
+        }).join('\n');
+        
+        return `Encontré ${indicadores.length} indicador(es) relacionado(s) con tu búsqueda:\n\n${lista}\n\n¿Sobre cuál te gustaría saber más detalles? Puedes preguntar por el nombre específico del indicador.`;
+      } else {
+        const lista = indicadores.slice(0, 5).map((ind, idx) => {
+          return `${idx + 1}. **${ind.nombre}**${ind.importancia ? ` (${ind.importancia})` : ''}`;
+        }).join('\n');
+        
+        return `Encontré ${indicadores.length} indicadores relacionados. Aquí tienes los primeros 5:\n\n${lista}\n\n... y ${indicadores.length - 5} más.\n\n¿Sobre cuál te gustaría saber más detalles? Puedes preguntar por el nombre específico del indicador.`;
+      }
+    }
+    
+    // Si no encuentra indicadores específicos, mostrar información general
+    const todosIndicadores = await getAllIndicators();
+    if (todosIndicadores.length > 0) {
+      return `Tenemos **${todosIndicadores.length} indicadores** disponibles en la base de datos. Puedes preguntar sobre:\n\n• **Indicadores específicos** (por ejemplo: "¿Qué es el indicador de empresas que usan inteligencia artificial?")\n• **Indicadores por dimensión** (por ejemplo: "¿Qué indicadores hay en transformación digital empresarial?")\n• **Valores de indicadores** (por ejemplo: "¿Cuál es el valor de empresas que usan inteligencia artificial?")\n• **Listar todas las dimensiones** (pregunta: "¿Qué dimensiones hay?")\n\n¿Sobre qué indicador te gustaría saber más?`;
     }
   }
   
@@ -196,6 +468,14 @@ export async function generateChatbotResponse(userQuery: string): Promise<string
   }
   
   // Respuesta por defecto si no encuentra nada
-  return `No encontré información específica sobre "${cleanQuery}" en la base de conocimiento. ¿Podrías reformular tu pregunta o ser más específico? Puedo ayudarte con información sobre encuestas, KPIs, indicadores y datos del ecosistema digital valenciano.`;
+  return `No encontré información específica sobre "${cleanQuery}" en la base de conocimiento. 
+
+Puedo ayudarte con:
+• **KPIs e Indicadores**: Pregunta sobre cualquier indicador de la base de datos (por ejemplo: "¿Qué es el indicador de empresas que usan inteligencia artificial?")
+• **Dimensiones**: Pregunta sobre las dimensiones disponibles (por ejemplo: "¿Qué dimensiones hay?" o "¿Qué indicadores hay en transformación digital empresarial?")
+• **Valores**: Pregunta sobre valores de indicadores (por ejemplo: "¿Cuál es el valor de empresas que usan inteligencia artificial?")
+• **Encuestas**: Información sobre encuestas disponibles
+
+¿Podrías reformular tu pregunta o ser más específico?`;
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,25 +9,19 @@ import { Navigate } from 'react-router-dom';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { 
   Database, 
-  Upload, 
   Settings, 
   RefreshCw, 
-  Play, 
-  Activity,
-  FileText,
-  AlertCircle,
-  CheckCircle2
+  Activity
 } from 'lucide-react';
 import NavigationHeader from '@/components/NavigationHeader';
 import FooterSection from '@/components/FooterSection';
-import { getDatabaseStats, triggerIngesta, getIngestaStatus, getIngestaLog } from '@/lib/brainnova-admin-api';
+import { getDatabaseStats, triggerIngesta } from '@/lib/brainnova-admin-api';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const AdminConfig = () => {
   const { profile, loading, isAdmin, isActive } = useUserProfile();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Estadísticas de la base de datos
   const { data: dbStats, isLoading: loadingStats, refetch: refetchStats } = useQuery({
@@ -38,39 +32,23 @@ const AdminConfig = () => {
     retryDelay: 1000,
   });
 
-  // Estado de la ingesta
-  const { data: ingestaStatus, refetch: refetchIngestaStatus } = useQuery({
-    queryKey: ['ingesta-status'],
-    queryFn: getIngestaStatus,
-    refetchInterval: 5000,
-    retry: 1,
-    retryDelay: 1000,
-  });
-
-  // Logs de ingesta
-  const { data: ingestaLogs } = useQuery({
-    queryKey: ['ingesta-logs'],
-    queryFn: () => getIngestaLog(50),
-    refetchInterval: 10000,
-    retry: 1,
-    retryDelay: 1000,
-  });
-
   // Mutación para iniciar ingesta
   const { mutate: startIngesta, isPending: startingIngesta } = useMutation({
     mutationFn: triggerIngesta,
     onSuccess: () => {
       toast({
         title: "Éxito",
-        description: "Proceso de ingesta iniciado",
+        description: "Proceso de ingesta iniciado. Los datos se actualizarán en breve.",
       });
-      queryClient.invalidateQueries({ queryKey: ['ingesta-status'] });
-      queryClient.invalidateQueries({ queryKey: ['ingesta-logs'] });
+      // Refrescar estadísticas después de un breve delay
+      setTimeout(() => {
+        refetchStats();
+      }, 2000);
     },
     onError: (error: Error) => {
       toast({
         title: "Error",
-        description: error.message || "No se pudo iniciar la ingesta",
+        description: error.message || "No se pudo iniciar la ingesta. Verifica que el backend esté disponible.",
         variant: "destructive",
       });
     },
@@ -145,50 +123,140 @@ const AdminConfig = () => {
               Administración del backend
             </h1>
             <p className="text-muted-foreground">
-              Configura el backend, gestiona la ingesta de datos y sube bases de datos
+              Visualiza estadísticas de la base de datos y configura el backend
             </p>
           </div>
 
-          <Tabs defaultValue="configuracion" className="w-full">
+          <Tabs defaultValue="estadisticas" className="w-full">
             <TabsList className="mb-6">
-              <TabsTrigger value="configuracion">Configuración</TabsTrigger>
-              <TabsTrigger value="ingesta">Ingesta de datos</TabsTrigger>
               <TabsTrigger value="estadisticas">Estadísticas</TabsTrigger>
+              <TabsTrigger value="configuracion">Configuración</TabsTrigger>
             </TabsList>
+
+            {/* Tab: Estadísticas */}
+            <TabsContent value="estadisticas" className="space-y-6">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">Estadísticas de la Base de Datos</h2>
+                  <p className="text-muted-foreground">Datos actualizados en tiempo real desde Supabase</p>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => refetchStats()}
+                    disabled={loadingStats}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${loadingStats ? 'animate-spin' : ''}`} />
+                    Refrescar
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => startIngesta()}
+                    disabled={startingIngesta}
+                  >
+                    <RefreshCw className={`h-4 w-4 mr-2 ${startingIngesta ? 'animate-spin' : ''}`} />
+                    {startingIngesta ? 'Actualizando...' : 'Actualizar desde Backend'}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Indicadores</CardTitle>
+                    <Database className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_indicadores || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Total definidos
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Resultados</CardTitle>
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_resultados || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Valores calculados
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Datos Crudos</CardTitle>
+                    <Database className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_datos_crudos || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Datos sin procesar
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Datos Macro</CardTitle>
+                    <Database className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_datos_macro || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Datos macroeconómicos
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Dimensiones</CardTitle>
+                    <Settings className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_dimensiones || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Dimensiones activas
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Subdimensiones</CardTitle>
+                    <Settings className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {loadingStats ? '...' : (dbStats?.total_subdimensiones || 0).toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Subdimensiones activas
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
             {/* Tab: Configuración */}
             <TabsContent value="configuracion" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Database className="h-5 w-5" />
-                    Subir base de datos
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="database-file">Archivo de base de datos</Label>
-                    <Input
-                      id="database-file"
-                      type="file"
-                      accept=".sql,.db,.dump"
-                      onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Formatos soportados: .sql, .db, .dump
-                    </p>
-                  </div>
-                  <Button
-                    onClick={handleUploadDatabase}
-                    disabled={!selectedFile}
-                    className="flex items-center gap-2"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Subir base de datos
-                  </Button>
-                </CardContent>
-              </Card>
-
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -214,158 +282,6 @@ const AdminConfig = () => {
                   </Button>
                 </CardContent>
               </Card>
-            </TabsContent>
-
-            {/* Tab: Ingesta de datos */}
-            <TabsContent value="ingesta" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="flex items-center gap-2">
-                      <Activity className="h-5 w-5" />
-                      Control de ingesta
-                    </CardTitle>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        refetchStats();
-                        refetchIngestaStatus();
-                      }}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Actualizar
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <div>
-                      <p className="font-medium">Estado de la ingesta</p>
-                      <p className="text-sm text-muted-foreground flex items-center gap-2">
-                        {ingestaStatus?.status === 'running' ? (
-                          <>
-                            <Activity className="h-4 w-4 animate-pulse text-primary" />
-                            En proceso...
-                          </>
-                        ) : ingestaStatus?.status === 'completed' ? (
-                          <>
-                            <CheckCircle2 className="h-4 w-4 text-success" />
-                            Completada
-                          </>
-                        ) : ingestaStatus?.status === 'error' ? (
-                          <>
-                            <AlertCircle className="h-4 w-4 text-destructive" />
-                            Error
-                          </>
-                        ) : (
-                          <>
-                            <Activity className="h-4 w-4 text-muted-foreground" />
-                            Inactiva
-                          </>
-                        )}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => startIngesta()}
-                      disabled={startingIngesta || ingestaStatus?.status === 'running'}
-                    >
-                      {startingIngesta ? (
-                        <>
-                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Iniciando...
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-4 w-4 mr-2" />
-                          Iniciar ingesta
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  {ingestaStatus?.last_run && (
-                    <div className="text-sm text-muted-foreground">
-                      Última ejecución: {new Date(ingestaStatus.last_run).toLocaleString('es-ES')}
-                    </div>
-                  )}
-
-                  {ingestaLogs && ingestaLogs.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2 flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
-                        Logs recientes
-                      </h4>
-                      <div className="max-h-64 overflow-y-auto space-y-1 bg-background p-3 rounded border">
-                        {ingestaLogs.map((log: any, index: number) => (
-                          <div key={index} className="text-xs font-mono text-muted-foreground">
-                            <span className="text-muted-foreground/70">
-                              {new Date(log.timestamp).toLocaleTimeString('es-ES')}
-                            </span>
-                            {' '}
-                            <span className={log.level === 'error' ? 'text-destructive' : ''}>
-                              {log.message}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Tab: Estadísticas */}
-            <TabsContent value="estadisticas" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Indicadores</CardTitle>
-                    <Database className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {loadingStats ? '...' : dbStats?.total_indicadores || 0}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Resultados</CardTitle>
-                    <Activity className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {loadingStats ? '...' : dbStats?.total_resultados || 0}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Datos crudos</CardTitle>
-                    <Database className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {loadingStats ? '...' : dbStats?.total_datos_crudos || 0}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Datos macro</CardTitle>
-                    <Database className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {loadingStats ? '...' : dbStats?.total_datos_macro || 0}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
             </TabsContent>
           </Tabs>
         </div>

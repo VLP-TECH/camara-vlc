@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -153,10 +153,37 @@ const Tendencias = () => {
   }, [errorIndicadores, errorResultados]);
 
   // Preparar datos para el gráfico
-  const datosGrafico = resultados?.map((item) => ({
-    periodo: item.periodo,
-    valor: typeof item.valor === 'number' ? item.valor : parseFloat(item.valor) || 0,
-  })).sort((a, b) => a.periodo - b.periodo) || [];
+  const datosGrafico = React.useMemo(() => {
+    if (!resultados || resultados.length === 0) {
+      return [];
+    }
+    
+    const datos = resultados
+      .map((item) => {
+        // Manejar diferentes formatos de respuesta
+        const periodo = item.periodo || item.anio || item.year || 0;
+        let valor = 0;
+        
+        if (typeof item.valor === 'number') {
+          valor = item.valor;
+        } else if (typeof item.valor_calculado === 'number') {
+          valor = item.valor_calculado;
+        } else if (item.valor) {
+          valor = parseFloat(String(item.valor)) || 0;
+        } else if (item.valor_calculado) {
+          valor = parseFloat(String(item.valor_calculado)) || 0;
+        }
+        
+        return {
+          periodo: Number(periodo),
+          valor: Number(valor),
+        };
+      })
+      .filter((item) => item.periodo > 0 && !isNaN(item.valor))
+      .sort((a, b) => a.periodo - b.periodo);
+    
+    return datos;
+  }, [resultados]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -342,15 +369,21 @@ const Tendencias = () => {
             ) : datosGrafico.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-96">
                 <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-                <p className="text-muted-foreground text-center">
+                <p className="text-muted-foreground text-center mb-4">
                   {indicadorSeleccionado && paisSeleccionado
                     ? "No hay datos disponibles para los filtros seleccionados. Intenta con otros filtros o verifica que el backend esté corriendo."
                     : "Selecciona un indicador y un país para ver el gráfico"}
                 </p>
                 {indicadorSeleccionado && paisSeleccionado && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Backend: {import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'}
-                  </p>
+                  <>
+                    <p className="text-xs text-muted-foreground mb-2">
+                      Backend: {import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      💡 Tip: Algunos indicadores pueden no tener datos para el país seleccionado. 
+                      Prueba con "España" o verifica en la consola del navegador qué indicadores tienen datos disponibles.
+                    </p>
+                  </>
                 )}
               </div>
             ) : (

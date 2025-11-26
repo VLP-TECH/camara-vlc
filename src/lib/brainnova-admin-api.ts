@@ -1,4 +1,6 @@
 // Servicio de API para gestión administrativa de Brainnova
+import { supabase } from '@/integrations/supabase/client';
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 /**
@@ -23,25 +25,38 @@ const handleApiError = async (response: Response): Promise<never> => {
 };
 
 /**
- * Obtiene estadísticas de la base de datos
+ * Obtiene estadísticas de la base de datos directamente desde Supabase
  */
 export const getDatabaseStats = async () => {
   try {
-    const response = await fetch(buildUrl('/api/v1/admin/stats'));
-    
-    if (!response.ok) {
-      await handleApiError(response);
-    }
-    
-    return response.json();
+    // Obtener estadísticas directamente desde Supabase
+    const [indicadores, resultados, datosCrudos, datosMacro, dimensiones, subdimensiones] = await Promise.all([
+      supabase.from('definicion_indicadores').select('nombre', { count: 'exact', head: true }),
+      supabase.from('resultado_indicadores').select('id', { count: 'exact', head: true }),
+      supabase.from('datos_crudos').select('id', { count: 'exact', head: true }),
+      supabase.from('datos_macro').select('id', { count: 'exact', head: true }),
+      supabase.from('dimensiones').select('nombre', { count: 'exact', head: true }),
+      supabase.from('subdimensiones').select('nombre', { count: 'exact', head: true }),
+    ]);
+
+    return {
+      total_indicadores: indicadores.count || 0,
+      total_resultados: resultados.count || 0,
+      total_datos_crudos: datosCrudos.count || 0,
+      total_datos_macro: datosMacro.count || 0,
+      total_dimensiones: dimensiones.count || 0,
+      total_subdimensiones: subdimensiones.count || 0,
+    };
   } catch (error) {
-    console.error('Error fetching database stats:', error);
+    console.error('Error fetching database stats from Supabase:', error);
     // Retornar objeto con valores por defecto si hay error
     return {
       total_indicadores: 0,
       total_resultados: 0,
       total_datos_crudos: 0,
-      total_datos_macro: 0
+      total_datos_macro: 0,
+      total_dimensiones: 0,
+      total_subdimensiones: 0,
     };
   }
 };
