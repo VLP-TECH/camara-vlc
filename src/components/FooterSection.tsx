@@ -54,13 +54,13 @@ const FooterSection = () => {
               de la Comunidad Valenciana.
             </p>
             <div className="flex space-x-3">
-              <Button variant="ghost" size="sm" className="p-2">
+              <Button variant="ghost" size="sm" className="p-2 hover:bg-transparent">
                 <Twitter className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="p-2">
+              <Button variant="ghost" size="sm" className="p-2 hover:bg-transparent">
                 <Linkedin className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="sm" className="p-2">
+              <Button variant="ghost" size="sm" className="p-2 hover:bg-transparent">
                 <Github className="h-4 w-4" />
               </Button>
             </div>
@@ -72,7 +72,7 @@ const FooterSection = () => {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent">
                     {link.label}
                   </Button>
                 </li>
@@ -86,7 +86,7 @@ const FooterSection = () => {
             <ul className="space-y-2">
               {resources.map((resource) => (
                 <li key={resource.label}>
-                  <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground justify-start">
+                  <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent justify-start">
                     {resource.label}
                     <ExternalLink className="h-3 w-3 ml-1" />
                   </Button>
@@ -121,7 +121,7 @@ const FooterSection = () => {
                     key={partner.label} 
                     variant="ghost" 
                     size="sm" 
-                    className="p-1 h-auto text-xs text-muted-foreground hover:text-foreground"
+                    className="p-1 h-auto text-xs text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent"
                   >
                     {partner.label}
                   </Button>
@@ -139,16 +139,16 @@ const FooterSection = () => {
             © 2024 Brainnova Ecosystem. Todos los derechos reservados.
           </div>
           <div className="flex space-x-6 text-sm">
-            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent">
               Política de Privacidad
             </Button>
-            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent">
               Términos de Uso
             </Button>
-            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent">
               Cookies
             </Button>
-            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="p-0 h-auto text-muted-foreground hover:text-foreground hover:font-bold hover:bg-transparent">
               Accesibilidad
             </Button>
           </div>
