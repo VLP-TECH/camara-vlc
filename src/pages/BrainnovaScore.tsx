@@ -155,8 +155,6 @@ const BrainnovaScore = () => {
             </p>
           </div>
 
-          {/* Estado del backend */}
-          <BackendStatus />
 
           {/* Formulario de filtros */}
           <Card className="p-6 mb-8 bg-gradient-card border-0">

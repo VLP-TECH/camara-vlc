@@ -40,11 +40,18 @@ export const getIndicadoresDisponibles = async (): Promise<string[]> => {
       signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
     });
     
+    // Si el backend devuelve un error (500, 404, etc.), usar fallback a Supabase
     if (!response.ok) {
       throw new Error(`Backend error: ${response.status}`);
     }
     
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      // Si no se puede parsear el JSON, usar fallback
+      throw new Error('Backend returned invalid JSON');
+    }
     
     // Si el backend devuelve datos, usarlos
     if (Array.isArray(data) && data.length > 0) {
@@ -56,31 +63,61 @@ export const getIndicadoresDisponibles = async (): Promise<string[]> => {
   } catch (error) {
     console.warn('Error fetching indicadores from backend, trying Supabase fallback:', error);
     
-    // Fallback: obtener indicadores que tienen datos desde Supabase
+    // Fallback: obtener indicadores desde Supabase
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
+      const supabaseModule = await import('@/integrations/supabase/client');
+      const supabase = supabaseModule.supabase;
       
-      // Obtener indicadores únicos que tienen resultados
-      const { data, error: supabaseError } = await supabase
-        .from('resultado_indicadores')
-        .select('nombre_indicador')
-        .not('nombre_indicador', 'is', null);
+      // Obtener todos los indicadores definidos
+      const { data: definiciones, error: errorDefiniciones } = await supabase
+        .from('definicion_indicadores')
+        .select('nombre');
       
-      if (supabaseError) {
-        console.error('Error fetching from Supabase:', supabaseError);
+      if (errorDefiniciones) {
+        console.error('Error fetching definiciones from Supabase:', errorDefiniciones);
+        // Fallback: obtener desde resultado_indicadores
+        const { data: resultados } = await supabase
+          .from('resultado_indicadores')
+          .select('nombre_indicador')
+          .not('nombre_indicador', 'is', null);
+        
+        if (!resultados || resultados.length === 0) {
+          return [];
+        }
+        
+        const indicadores = Array.from(
+          new Set(resultados.map(item => item.nombre_indicador).filter(Boolean))
+        ).sort();
+        
+        return indicadores;
+      }
+      
+      if (!definiciones || definiciones.length === 0) {
         return [];
       }
       
-      if (!data || data.length === 0) {
-        return [];
+      // Normalizar nombres (eliminar duplicados por capitalización)
+      const indicadoresNormalizados = new Map<string, string>();
+      for (const def of definiciones) {
+        const nombre = def.nombre?.trim();
+        if (!nombre) continue;
+        
+        const normalizado = nombre.toLowerCase().trim();
+        if (!indicadoresNormalizados.has(normalizado)) {
+          indicadoresNormalizados.set(normalizado, nombre);
+        } else {
+          // Si hay duplicado, mantener la versión más completa
+          const existente = indicadoresNormalizados.get(normalizado);
+          if (nombre.length > existente.length) {
+            indicadoresNormalizados.set(normalizado, nombre);
+          }
+        }
       }
       
-      // Obtener nombres únicos de indicadores
-      const indicadoresUnicos = Array.from(
-        new Set(data.map(item => item.nombre_indicador).filter(Boolean))
-      ).sort();
+      // Ordenar alfabéticamente
+      const indicadores = Array.from(indicadoresNormalizados.values()).sort();
       
-      return indicadoresUnicos;
+      return indicadores;
     } catch (supabaseError) {
       console.error('Error in Supabase fallback:', supabaseError);
       return [];
@@ -100,6 +137,7 @@ export const getFiltrosGlobales = async (params?: {
   sector?: string;
   tamano?: string;
 }): Promise<FiltrosGlobalesResponse> => {
+  // Intentar backend primero con timeout corto
   try {
     const queryParams = new URLSearchParams();
     
@@ -121,14 +159,21 @@ export const getFiltrosGlobales = async (params?: {
     
     const url = buildUrl(`/api/v1/filtros-globales${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
     const response = await fetch(url, {
-      signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
+      signal: AbortSignal.timeout(3000), // Timeout corto de 3 segundos
     });
     
+    // Si el backend devuelve un error (500, 404, etc.), usar fallback a Supabase
     if (!response.ok) {
       throw new Error(`Backend error: ${response.status}`);
     }
     
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      // Si no se puede parsear el JSON, usar fallback
+      throw new Error('Backend returned invalid JSON');
+    }
     
     // Si el backend devuelve datos válidos, usarlos
     if (data && (data.paises?.length > 0 || data.anios?.length > 0 || data.provincias?.length > 0)) {
@@ -138,40 +183,49 @@ export const getFiltrosGlobales = async (params?: {
     // Si el backend devuelve datos vacíos, intentar desde Supabase
     throw new Error('Backend returned empty data');
   } catch (error) {
-    console.warn('Error fetching filtros globales from backend, trying Supabase fallback:', error);
+    // Siempre usar fallback a Supabase si el backend falla
+    console.warn('Backend no disponible, usando Supabase:', error);
+  }
+  
+  // Fallback: obtener filtros desde Supabase
+  try {
+    const supabaseModule = await import('@/integrations/supabase/client');
+    const supabase = supabaseModule.supabase;
     
-    // Fallback: obtener filtros desde Supabase
-    try {
-      const { supabase } = await import('@/integrations/supabase/client');
-      
-      // Construir query base
-      let query = supabase
+    if (!supabase) {
+      throw new Error('No se pudo cargar el cliente de Supabase');
+    }
+    
+    // Construir query base
+    let query = supabase
+      .from('resultado_indicadores')
+      .select('pais, provincia, periodo, nombre_indicador');
+    
+    // Aplicar filtros según parámetros
+    if (params?.nombre_indicador) {
+      // Buscar por nombre de indicador (puede haber variaciones de capitalización)
+      query = query.ilike('nombre_indicador', `%${params.nombre_indicador}%`);
+    }
+    if (params?.pais) {
+      query = query.eq('pais', params.pais);
+    }
+    if (params?.periodo) {
+      query = query.eq('periodo', params.periodo);
+    }
+    
+    const { data, error: supabaseError } = await query;
+    
+    if (supabaseError) {
+      console.error('Error en Supabase:', supabaseError);
+      // Si hay error, devolver todos los países disponibles (sin filtrar por indicador)
+      const { data: todosPaises } = await supabase
         .from('resultado_indicadores')
-        .select('pais, provincia, periodo, sector, tamano_empresa, nombre_indicador');
+        .select('pais');
       
-      // Aplicar filtros según parámetros
-      if (params?.nombre_indicador) {
-        query = query.eq('nombre_indicador', params.nombre_indicador);
-      }
-      if (params?.pais) {
-        query = query.eq('pais', params.pais);
-      }
-      if (params?.periodo) {
-        query = query.eq('periodo', params.periodo);
-      }
-      if (params?.sector) {
-        query = query.eq('sector', params.sector);
-      }
-      if (params?.tamano) {
-        query = query.eq('tamano_empresa', params.tamano);
-      }
-      
-      const { data, error: supabaseError } = await query;
-      
-      if (supabaseError) {
-        console.error('Error fetching from Supabase:', supabaseError);
+      if (todosPaises && todosPaises.length > 0) {
+        const paisesUnicos = Array.from(new Set(todosPaises.map(item => item.pais).filter(Boolean))).sort();
         return {
-          paises: [],
+          paises: paisesUnicos,
           provincias: [],
           sectores: [],
           tamanos_empresa: [],
@@ -179,32 +233,6 @@ export const getFiltrosGlobales = async (params?: {
         };
       }
       
-      if (!data || data.length === 0) {
-        return {
-          paises: [],
-          provincias: [],
-          sectores: [],
-          tamanos_empresa: [],
-          anios: []
-        };
-      }
-      
-      // Extraer valores únicos
-      const paises = Array.from(new Set(data.map(item => item.pais).filter(Boolean))).sort();
-      const provincias = Array.from(new Set(data.map(item => item.provincia).filter(Boolean))).sort();
-      const sectores = Array.from(new Set(data.map(item => item.sector).filter(Boolean))).sort();
-      const tamanos_empresa = Array.from(new Set(data.map(item => item.tamano_empresa).filter(Boolean))).sort();
-      const anios = Array.from(new Set(data.map(item => item.periodo).filter(Boolean))).sort((a, b) => b - a);
-      
-      return {
-        paises,
-        provincias,
-        sectores,
-        tamanos_empresa,
-        anios
-      };
-    } catch (supabaseError) {
-      console.error('Error in Supabase fallback:', supabaseError);
       return {
         paises: [],
         provincias: [],
@@ -213,6 +241,55 @@ export const getFiltrosGlobales = async (params?: {
         anios: []
       };
     }
+    
+    if (!data || data.length === 0) {
+      // Si no hay datos para el indicador específico, devolver todos los países disponibles
+      const { data: todosPaises } = await supabase
+        .from('resultado_indicadores')
+        .select('pais');
+      
+      if (todosPaises && todosPaises.length > 0) {
+        const paisesUnicos = Array.from(new Set(todosPaises.map(item => item.pais).filter(Boolean))).sort();
+        return {
+          paises: paisesUnicos,
+          provincias: [],
+          sectores: [],
+          tamanos_empresa: [],
+          anios: []
+        };
+      }
+      
+      return {
+        paises: [],
+        provincias: [],
+        sectores: [],
+        tamanos_empresa: [],
+        anios: []
+      };
+    }
+    
+    // Extraer valores únicos
+    const paises = Array.from(new Set(data.map(item => item.pais).filter(Boolean))).sort();
+    const provincias = Array.from(new Set(data.map(item => item.provincia).filter(Boolean))).sort();
+    const anios = Array.from(new Set(data.map(item => item.periodo).filter(Boolean))).sort((a, b) => b - a);
+    
+    return {
+      paises: paises.length > 0 ? paises : ['España'], // Si no hay países, devolver España por defecto
+      provincias,
+      sectores: [], // No hay columna sector en la tabla actual
+      tamanos_empresa: [], // No hay columna tamano_empresa en la tabla actual
+      anios
+    };
+  } catch (supabaseError) {
+    console.error('Error en fallback de Supabase:', supabaseError);
+    // Devolver al menos España como opción por defecto
+    return {
+      paises: ['España'],
+      provincias: [],
+      sectores: [],
+      tamanos_empresa: [],
+      anios: []
+    };
   }
 };
 
@@ -262,7 +339,8 @@ export const getResultados = async (params: {
     
     // Fallback: obtener datos directamente desde Supabase
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
+      const supabaseModule = await import('@/integrations/supabase/client');
+      const supabase = supabaseModule.supabase;
       
       let query = supabase
         .from('resultado_indicadores')
@@ -350,7 +428,8 @@ export const calculateBrainnovaScore = async (
     
     // Fallback: calcular score desde Supabase
     try {
-      const { supabase } = await import('@/integrations/supabase/client');
+      const supabaseModule = await import('@/integrations/supabase/client');
+      const supabase = supabaseModule.supabase;
       
       // Mapa de importancia
       const MAPA_IMPORTANCIA: { [key: string]: number } = {

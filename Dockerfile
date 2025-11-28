@@ -4,6 +4,16 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Accept build arguments for Vite environment variables
+ARG VITE_API_BASE_URL=http://backend:8000
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+
+# Set as environment variables for the build
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
 # Install dependencies first (for better caching)
 COPY package*.json ./
 RUN npm ci --only=production=false
@@ -32,8 +42,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder --chown=nextjs:nodejs /app/package*.json ./
 COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
 
-# Install only production dependencies
-RUN npm ci --only=production && \
+# Install production dependencies + vite (needed for preview)
+RUN npm ci --omit=dev && \
+    npm install vite --save-prod && \
     npm cache clean --force
 
 # Switch to non-root user

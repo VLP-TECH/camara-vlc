@@ -1,0 +1,59 @@
+# Multi-stage build para optimizar el tamaño
+FROM python:3.11-slim AS builder
+
+# Instalar dependencias del sistema necesarias para compilar
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar solo archivos del backend (requirements.txt debe estar en la raíz)
+COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
+
+# Production stage
+FROM python:3.11-slim AS runner
+
+# Instalar solo runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear usuario no-root para seguridad
+RUN useradd -m -u 1000 appuser
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar dependencias instaladas desde builder
+COPY --from=builder /root/.local /home/appuser/.local
+
+# Copiar código de la aplicación (solo archivos del backend)
+COPY --chown=appuser:appuser main.py .
+COPY --chown=appuser:appuser microservicio_exposicion/ ./microservicio_exposicion/
+COPY --chown=appuser:appuser microservicio_ingesta/ ./microservicio_ingesta/
+COPY --chown=appuser:appuser database/ ./database/
+COPY --chown=appuser:appuser config/ ./config/
+COPY --chown=appuser:appuser modelos/ ./modelos/
+
+# Variables de entorno
+ENV PYTHONUNBUFFERED=1 \
+    PATH=/home/appuser/.local/bin:$PATH \
+    PORT=8000
+
+# Cambiar a usuario no-root
+USER appuser
+
+# Exponer puerto
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/indicadores-disponibles')"
+
+# Comando para ejecutar la API
+CMD ["python", "main.py"]
+

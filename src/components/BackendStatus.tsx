@@ -10,8 +10,13 @@ export const BackendStatus = () => {
     queryKey: ["backend-status"],
     queryFn: async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/indicadores-disponibles`);
-        return response.ok;
+        const response = await fetch(`${API_BASE_URL}/api/v1/indicadores-disponibles`, {
+          signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
+        });
+        // Consideramos el backend disponible si responde (incluso con error 500)
+        // Un 500 significa que el servidor está funcionando pero puede haber problemas de datos
+        // Un error de conexión (catch) significa que el servidor no está disponible
+        return response.status < 600; // Cualquier respuesta HTTP válida (incluye 500)
       } catch {
         return false;
       }

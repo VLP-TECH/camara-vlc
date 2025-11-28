@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+# ¡ATENCIÓN! ESTE ARCHIVO ES GENERADO AUTOMÁTICAMENTE.
+# NO LO EDITES A MANO. 
+    
+
+GUIA_DATOS_PROCESADOS = [
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\crudo\\poblacion_por_pais_y_edad.csv', 'nombre_indicador': None, 'descripcion_dato': 'Población total entre 16 y 74 años', 'procesado': False, 'nombre_resultado': 'poblacion'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\crudo\\poblacion_por_pais.csv', 'nombre_indicador': None, 'descripcion_dato': 'Población total', 'procesado': False, 'nombre_resultado': 'poblacion'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_uso_ia.csv', 'nombre_indicador': 'Empresas que usan inteligencia artificial', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_big_data.csv', 'nombre_indicador': 'Empresas que analizan big data de cualquier fuente de datos', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_erp_procesos_internos.csv', 'nombre_indicador': 'Empresas que comparten información electrónica internamente con un ERP', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_presencia_web_propia.csv', 'nombre_indicador': 'Empresas que tienen un sitio web o página de inicio', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_venta_online.csv', 'nombre_indicador': 'Empresas que utilizan el mercado de comercio electrónico para ventas', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\habilidades_digitales_basicas.csv', 'nombre_indicador': 'Personas con habilidades digitales básicas', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(16-74 annos)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\habilidades_digitales_superior_a_basica.csv', 'nombre_indicador': 'Personas con habilidades digitales generales superiores a las básicas', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(16-74 annos)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\interaccion_autoridades_publicas.csv', 'nombre_indicador': 'Personas que interactúan en línea con las autoridades públicas', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(16-74 annos)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\personas_servicio_banca_electronica.csv', 'nombre_indicador': 'Usuarios que usan banca online', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(16-74 annos)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\personas_uso_internet_una_vez_semana.csv', 'nombre_indicador': 'Uso regular de Internet', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(16-74 annos)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_uso_redes_sociales.csv', 'nombre_indicador': 'Empresas que utilizan las redes sociales', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\eurostat\\filtered\\resultado\\empresas_formacion_empleados_tic.csv', 'nombre_indicador': 'Formación en TIC en empresas', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\ine\\filtered\\crudo\\poblacion_por_provincia.csv', 'nombre_indicador': None, 'descripcion_dato': 'Población total', 'procesado': False, 'nombre_resultado': 'poblacion'},
+    {'ruta_archivo': 'data\\processed\\ine\\filtered\\resultado\\empresas_permiten_teletrabajo.csv', 'nombre_indicador': 'Teletrabajo', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\ine\\filtered\\resultado\\empresas_servicios_cloud_computing.csv', 'nombre_indicador': 'Empresas con infraestructura en la nube', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\ine\\filtered\\resultado\\empresas_tic_actividades_i+d.csv', 'nombre_indicador': 'Número de empresas que realizan I+D en el sector TIC', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': 'nº(empresas)'},
+    {'ruta_archivo': 'data\\processed\\cnmc\\filtered\\crudo\\suscripciones_datos_moviles.csv', 'nombre_indicador': 'Adopción de banda ancha móvil (suscripciones/100 personas)', 'descripcion_dato': 'Nº total de suscripciones activas de datos móviles', 'procesado': False, 'nombre_resultado': 'lineas_o_accesos'},
+    {'ruta_archivo': 'data\\processed\\cnmc\\filtered\\crudo\\suscripciones_banda_ancha_fija.csv', 'nombre_indicador': 'Adopción de banda ancha fija (suscripciones/100 personas)', 'descripcion_dato': 'Nº total de suscripciones de banda ancha fija', 'procesado': False, 'nombre_resultado': 'lineas_o_accesos'},
+    {'ruta_archivo': 'data\\processed\\cnmc\\filtered\\crudo\\precio_banda_ancha.csv', 'nombre_indicador': 'Precio relativo de banda ancha', 'descripcion_dato': 'Precio mensual del servicio de banda ancha en euros', 'procesado': False, 'nombre_resultado': 'ingresos'},
+    {'ruta_archivo': 'data\\processed\\digital_decade\\filtered\\resultado\\cobertura_de_redes_vhcn.csv', 'nombre_indicador': 'Cobertura de redes de muy alta capacidad (VHCN)', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(hogares)'},
+    {'ruta_archivo': 'data\\processed\\digital_decade\\filtered\\resultado\\empresas_usan_crm.csv', 'nombre_indicador': 'Empresas que utilizan software de gestión de relaciones con los clientes (CRM)', 'descripcion_dato': None, 'procesado': True, 'nombre_resultado': '%(empresas)'},
+    {'ruta_archivo': 'data\\processed\\WorldBank\\filtered\\crudo\\rnbpc.csv', 'nombre_indicador': 'Precio relativo de banda ancha', 'descripcion_dato': 'Renta nacional bruta per cápita', 'procesado': False, 'nombre_resultado': 'Euros'},
+]

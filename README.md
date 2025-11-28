@@ -104,7 +104,143 @@ camara-vlc/
    - Si usas funcionalidades de Brainnova Score o Tendencias, asegúrate de que el backend esté disponible
    - La aplicación tiene fallback a Supabase si el backend no está disponible
 
-### Opción 1: Despliegue con Docker (Recomendado)
+### Opción 1: Despliegue con Docker Compose (Recomendado)
+
+Este método despliega frontend, backend y PostgreSQL en un solo comando.
+
+#### Preparación
+
+1. **Copiar el backend al repositorio (en la raíz):**
+
+   **Opción A: Usar el script automatizado (Recomendado):**
+   ```bash
+   # Ejecutar el script de setup
+   ./setup-backend.sh /ruta/al/backend
+   
+   # Ejemplo:
+   ./setup-backend.sh ~/Downloads/Camara_de_comercio
+   ```
+   
+   El script copiará los archivos del backend directamente en la raíz del repositorio:
+   - `main.py`
+   - `requirements.txt`
+   - `microservicio_exposicion/`
+   - `database/`
+   - `config/`
+
+   **Opción B: Copiar manualmente:**
+   ```bash
+   # Copiar archivos esenciales directamente en la raíz
+   cp /ruta/al/backend/main.py .
+   cp /ruta/al/backend/requirements.txt .
+   cp -r /ruta/al/backend/microservicio_exposicion .
+   cp -r /ruta/al/backend/database .
+   cp -r /ruta/al/backend/config .
+   ```
+
+2. **Configurar variables de entorno:**
+   ```bash
+   # Copiar el archivo de ejemplo
+   cp env.example .env
+   
+   # Editar .env con tus valores reales
+   nano .env
+   ```
+
+3. **Variables de entorno necesarias (.env):**
+   ```bash
+   # Base de datos
+   DB_USER=postgres
+   DB_PASSWORD=tu_password_seguro
+   DB_NAME=indicadores
+   DB_PORT=5432
+   
+   # Backend
+   BACKEND_PORT=8000
+   
+   # Frontend
+   PORT=4173
+   NODE_ENV=production
+   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+   VITE_SUPABASE_ANON_KEY=tu-clave-anon
+   ```
+
+#### Despliegue
+
+```bash
+# Construir y levantar todos los servicios
+docker-compose up -d
+
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f frontend
+docker-compose logs -f backend
+docker-compose logs -f db
+
+# Detener todos los servicios
+docker-compose down
+
+# Detener y eliminar volúmenes (¡cuidado! esto borra la BD)
+docker-compose down -v
+```
+
+#### Servicios disponibles
+
+- **Frontend:** http://localhost:4173
+- **Backend API:** http://localhost:8000
+- **Backend Docs:** http://localhost:8000/docs
+- **PostgreSQL:** localhost:5432
+
+### Opción 2: Despliegue en EasyPanel con Docker Compose
+
+1. **Configuración del Repositorio:**
+   - URL: `https://github.com/tu-usuario/camara-vlc.git`
+   - Rama: `main` o `master`
+
+2. **Configuración del Build:**
+   - Tipo: **Docker Compose**
+   - Docker Compose File: `docker-compose.yml`
+   - (EasyPanel detectará automáticamente el archivo)
+
+3. **Variables de Entorno en EasyPanel:**
+   ```
+   # Base de datos
+   DB_USER=postgres
+   DB_PASSWORD=tu_password_seguro
+   DB_NAME=indicadores
+   DB_PORT=5432
+   
+   # Backend
+   BACKEND_PORT=8000
+   
+   # Frontend
+   PORT=4173
+   NODE_ENV=production
+   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+   VITE_SUPABASE_ANON_KEY=tu-clave-anon
+   ```
+
+4. **Importante - Preparar el backend:**
+   - Ejecuta `./setup-backend.sh ~/Downloads/Camara_de_comercio` para copiar el backend
+   - El backend se copia directamente en la raíz del repositorio
+   - El archivo `requirements.txt` debe existir en la raíz
+   - El archivo `Dockerfile.backend` ya está incluido
+
+5. **Puertos:**
+   - Frontend: `4173`
+   - Backend: `8000`
+   - PostgreSQL: `5432` (solo interno, no exponer)
+
+6. **Desplegar:**
+   - Guardar configuración
+   - Hacer clic en "Deploy"
+   - EasyPanel construirá y levantará los 3 servicios automáticamente
+
+### Opción 3: Despliegue con Docker (Solo Frontend)
+
+Si solo necesitas el frontend sin backend:
 
 ```bash
 # 1. Construir la imagen Docker
@@ -114,44 +250,12 @@ docker build -t camara-vlc-app .
 docker run -d \
   -p 4173:4173 \
   --name camara-vlc-app \
-  --env-file .env.production \
+  --env-file .env \
   camara-vlc-app
 
 # 3. Ver logs
 docker logs -f camara-vlc-app
 ```
-
-**Docker Compose:**
-```bash
-docker-compose up -d
-```
-
-### Opción 2: Despliegue en EasyPanel
-
-1. **Configuración del Repositorio:**
-   - URL: `https://github.com/tu-usuario/camara-vlc.git`
-   - Rama: `main` o `master`
-
-2. **Configuración del Build:**
-   - Dockerfile Path: `Dockerfile` (o dejar vacío)
-   - Build Command: (dejar vacío)
-   - Start Command: (dejar vacío)
-
-3. **Variables de Entorno en EasyPanel:**
-   ```
-   VITE_SUPABASE_URL=tu-url
-   VITE_SUPABASE_ANON_KEY=tu-clave
-   VITE_API_BASE_URL=tu-backend-url
-   NODE_ENV=production
-   PORT=4173
-   ```
-
-4. **Puerto:**
-   - Puerto de la aplicación: `4173`
-
-5. **Desplegar:**
-   - Guardar configuración
-   - Hacer clic en "Deploy"
 
 ### Opción 3: Despliegue Manual con Vite Preview
 
@@ -200,30 +304,67 @@ npm run start
 
 ### Verificación Post-Despliegue
 
-1. **Verificar que la aplicación carga:**
-   ```bash
-   curl http://localhost:4173
-   ```
+#### 1. Verificar servicios Docker
 
-2. **Verificar en el navegador:**
-   - Abre la URL de producción
-   - Verifica que no haya errores en la consola (F12)
-   - Verifica que los archivos JS/CSS se cargan correctamente
-   - Prueba la autenticación
-   - Verifica que las páginas principales funcionan:
-     - `/dashboard` - Dashboard principal
-     - `/kpis` - Dashboard de KPIs
-     - `/tendencias` - Gráficos de tendencias
-     - `/brainnova-score` - Calculadora de Brainnova Score
+```bash
+# Ver estado de todos los servicios
+docker-compose ps
 
-3. **Verificar conexión a Supabase:**
-   - Intenta iniciar sesión
-   - Verifica que los datos se cargan correctamente
+# Deberías ver 3 servicios corriendo:
+# - frontend (ecosistema-valencia-view)
+# - backend (app_backend)
+# - db (db_indicadores)
+```
 
-4. **Verificar Backend (si aplica):**
-   - Ve a `/config` como administrador
-   - Verifica el estado del backend
-   - Prueba la funcionalidad de actualización de datos
+#### 2. Verificar Backend
+
+```bash
+# Verificar que el backend responde
+curl http://localhost:8000/api/v1/indicadores-disponibles
+
+# Ver documentación de la API
+# Abre en el navegador: http://localhost:8000/docs
+```
+
+#### 3. Verificar Base de Datos
+
+```bash
+# Conectar a PostgreSQL
+docker-compose exec db psql -U postgres -d indicadores
+
+# Verificar tablas
+\dt
+
+# Salir
+\q
+```
+
+#### 4. Verificar Frontend
+
+```bash
+# Verificar que el frontend carga
+curl http://localhost:4173
+```
+
+#### 5. Verificar en el navegador
+
+- Abre la URL de producción (http://localhost:4173 o tu dominio)
+- Verifica que no haya errores en la consola (F12)
+- Verifica que los archivos JS/CSS se cargan correctamente
+- Prueba la autenticación
+- Verifica que las páginas principales funcionan:
+  - `/dashboard` - Dashboard principal
+  - `/kpis` - Dashboard de KPIs
+  - `/tendencias` - Gráficos de tendencias (debe usar el backend)
+  - `/brainnova-score` - Calculadora de Brainnova Score (debe usar el backend)
+
+#### 6. Verificar conexión Frontend-Backend
+
+- Ve a `/config` como administrador
+- Verifica el estado del backend (debe mostrar "Conectado")
+- Prueba la funcionalidad de actualización de datos
+- Verifica que `/tendencias` muestra datos del backend
+- Verifica que `/brainnova-score` puede calcular scores
 
 ## 🔧 Configuración de Base de Datos
 

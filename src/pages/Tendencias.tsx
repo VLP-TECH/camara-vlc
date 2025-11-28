@@ -202,8 +202,6 @@ const Tendencias = () => {
             </p>
           </div>
 
-          {/* Estado del backend */}
-          <BackendStatus />
 
           {/* Filtros */}
           <Card className="p-6 mb-8 bg-gradient-card border-0">

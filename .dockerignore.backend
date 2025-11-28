@@ -1,0 +1,88 @@
+# Backend dockerignore - usar durante build del backend
+# .dockerignore para el backend
+# Este archivo se usa cuando se construye la imagen del backend
+
+# Frontend files (no necesarios para el backend)
+src/
+public/
+index.html
+vite.config.ts
+tsconfig.json
+tsconfig.app.json
+tsconfig.node.json
+package.json
+package-lock.json
+node_modules/
+dist/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Frontend build files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Frontend config
+tailwind.config.js
+postcss.config.js
+.eslintrc.cjs
+
+# Supabase (frontend)
+supabase/
+
+# Scripts del frontend
+setup-backend.sh
+
+# Docker files (excepto el que estamos usando)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python (se incluirán en el build, pero los cache se ignoran)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Data files grandes (no necesarios en producción)
+data/
+datos_hogares_cnmc/
+tests/
+*.csv
+*.xlsx
+*.pdf
+
+# Logs
+*.log
+
+# Documentation
+README.md
+docs/
+backend/README.md
+
+# Environment files
+.env
+.env.*
+!.env.example
+env.example
+

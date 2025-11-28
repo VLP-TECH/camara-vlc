@@ -1,16 +1,74 @@
-version: '3.8'
-
 services:
-  app:
+  # --- Servicio de Base de Datos PostgreSQL ---
+  db:
+    image: postgres:17
+    container_name: db_indicadores
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-1234}
+      POSTGRES_DB: ${DB_NAME:-indicadores}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Opcional: cargar datos iniciales
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ecosistema-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Servicio de Backend (API Brainnova) ---
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: app_backend
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-1234}
+      - DB_NAME=${DB_NAME:-indicadores}
+      - PYTHONUNBUFFERED=1
+    networks:
+      - ecosistema-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/indicadores-disponibles')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # --- Servicio de Frontend ---
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=http://localhost:8000
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
     container_name: ecosistema-valencia-view
+    depends_on:
+      - backend
     ports:
       - "${PORT:-4173}:4173"
     environment:
       - NODE_ENV=production
       - PORT=4173
+    networks:
+      - ecosistema-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:4173', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
@@ -18,11 +76,11 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-    networks:
-      - ecosistema-network
+
+volumes:
+  postgres_data:
+    driver: local
 
 networks:
   ecosistema-network:
     driver: bridge
-
-
