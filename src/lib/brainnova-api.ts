@@ -91,6 +91,7 @@ export const getIndicadoresDisponibles = async (): Promise<string[]> => {
 /**
  * Obtiene filtros globales según parámetros
  * GET /api/v1/filtros-globales
+ * Fallback a Supabase si el backend no está disponible
  */
 export const getFiltrosGlobales = async (params?: {
   nombre_indicador?: string;
@@ -119,23 +120,99 @@ export const getFiltrosGlobales = async (params?: {
     }
     
     const url = buildUrl(`/api/v1/filtros-globales${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
+    });
     
     if (!response.ok) {
-      await handleApiError(response);
+      throw new Error(`Backend error: ${response.status}`);
     }
     
-    return response.json();
+    const data = await response.json();
+    
+    // Si el backend devuelve datos válidos, usarlos
+    if (data && (data.paises?.length > 0 || data.anios?.length > 0 || data.provincias?.length > 0)) {
+      return data;
+    }
+    
+    // Si el backend devuelve datos vacíos, intentar desde Supabase
+    throw new Error('Backend returned empty data');
   } catch (error) {
-    console.error('Error fetching filtros globales:', error);
-    // Retornar objeto vacío si hay error de conexión
-    return {
-      paises: [],
-      provincias: [],
-      sectores: [],
-      tamanos_empresa: [],
-      anios: []
-    };
+    console.warn('Error fetching filtros globales from backend, trying Supabase fallback:', error);
+    
+    // Fallback: obtener filtros desde Supabase
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // Construir query base
+      let query = supabase
+        .from('resultado_indicadores')
+        .select('pais, provincia, periodo, sector, tamano_empresa, nombre_indicador');
+      
+      // Aplicar filtros según parámetros
+      if (params?.nombre_indicador) {
+        query = query.eq('nombre_indicador', params.nombre_indicador);
+      }
+      if (params?.pais) {
+        query = query.eq('pais', params.pais);
+      }
+      if (params?.periodo) {
+        query = query.eq('periodo', params.periodo);
+      }
+      if (params?.sector) {
+        query = query.eq('sector', params.sector);
+      }
+      if (params?.tamano) {
+        query = query.eq('tamano_empresa', params.tamano);
+      }
+      
+      const { data, error: supabaseError } = await query;
+      
+      if (supabaseError) {
+        console.error('Error fetching from Supabase:', supabaseError);
+        return {
+          paises: [],
+          provincias: [],
+          sectores: [],
+          tamanos_empresa: [],
+          anios: []
+        };
+      }
+      
+      if (!data || data.length === 0) {
+        return {
+          paises: [],
+          provincias: [],
+          sectores: [],
+          tamanos_empresa: [],
+          anios: []
+        };
+      }
+      
+      // Extraer valores únicos
+      const paises = Array.from(new Set(data.map(item => item.pais).filter(Boolean))).sort();
+      const provincias = Array.from(new Set(data.map(item => item.provincia).filter(Boolean))).sort();
+      const sectores = Array.from(new Set(data.map(item => item.sector).filter(Boolean))).sort();
+      const tamanos_empresa = Array.from(new Set(data.map(item => item.tamano_empresa).filter(Boolean))).sort();
+      const anios = Array.from(new Set(data.map(item => item.periodo).filter(Boolean))).sort((a, b) => b - a);
+      
+      return {
+        paises,
+        provincias,
+        sectores,
+        tamanos_empresa,
+        anios
+      };
+    } catch (supabaseError) {
+      console.error('Error in Supabase fallback:', supabaseError);
+      return {
+        paises: [],
+        provincias: [],
+        sectores: [],
+        tamanos_empresa: [],
+        anios: []
+      };
+    }
   }
 };
 
@@ -233,6 +310,7 @@ export const getResultados = async (params: {
 /**
  * Calcula el Brainnova Score
  * POST /api/v1/brainnova-score
+ * Fallback a Supabase si el backend no está disponible
  */
 export const calculateBrainnovaScore = async (
   data: BrainnovaScoreRequest
@@ -244,16 +322,205 @@ export const calculateBrainnovaScore = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      signal: AbortSignal.timeout(10000), // Timeout de 10 segundos para cálculos
     });
     
     if (!response.ok) {
-      await handleApiError(response);
+      throw new Error(`Backend error: ${response.status}`);
     }
     
-    return response.json();
+    const result = await response.json();
+    
+    // Si el backend devuelve datos válidos, usarlos
+    if (result && (result.brainnova_global_score !== undefined || result.indice_ponderado !== undefined)) {
+      // Normalizar formato de respuesta
+      return {
+        indice_ponderado: result.brainnova_global_score || result.indice_ponderado,
+        desglose: result.desglose_por_dimension?.reduce((acc: any, dim: any) => {
+          acc[dim.dimension] = dim.score_dimension;
+          return acc;
+        }, {}) || result.desglose,
+        ...result
+      };
+    }
+    
+    throw new Error('Backend returned invalid data');
   } catch (error) {
-    console.error('Error calculating Brainnova score:', error);
-    throw error;
+    console.warn('Error calculating Brainnova score from backend, trying Supabase fallback:', error);
+    
+    // Fallback: calcular score desde Supabase
+    try {
+      const { supabase } = await import('@/integrations/supabase/client');
+      
+      // Mapa de importancia
+      const MAPA_IMPORTANCIA: { [key: string]: number } = {
+        "Alta": 3, "Media": 2, "Baja": 1,
+        "alta": 3, "media": 2, "baja": 1
+      };
+      
+      // 1. Obtener resultados de indicadores
+      let query = supabase
+        .from('resultado_indicadores')
+        .select('valor_calculado, nombre_indicador')
+        .eq('pais', data.pais)
+        .eq('periodo', data.periodo);
+      
+      if (data.provincia) {
+        query = query.eq('provincia', data.provincia);
+      } else {
+        // Si no hay provincia, obtener datos nacionales (provincia null o vacía)
+        query = query.or('provincia.is.null,provincia.eq.');
+      }
+      
+      if (data.sector) {
+        query = query.eq('sector', data.sector);
+      }
+      // Si no hay sector, no aplicamos filtro (obtener todos)
+      
+      if (data.tamano_empresa) {
+        query = query.eq('tamano_empresa', data.tamano_empresa);
+      }
+      // Si no hay tamaño, no aplicamos filtro (obtener todos)
+      
+      const { data: resultados, error: supabaseError } = await query;
+      
+      if (supabaseError) {
+        console.error('Error fetching from Supabase:', supabaseError);
+        throw new Error('No se pudieron obtener los datos necesarios para calcular el score');
+      }
+      
+      if (!resultados || resultados.length === 0) {
+        throw new Error('No hay datos suficientes para calcular el score con los filtros seleccionados');
+      }
+      
+      // 2. Obtener información de indicadores, subdimensiones y dimensiones
+      const nombresIndicadores = Array.from(new Set(resultados.map(r => r.nombre_indicador).filter(Boolean)));
+      
+      // Obtener definiciones de indicadores
+      const { data: definiciones } = await supabase
+        .from('definicion_indicadores')
+        .select('nombre, importancia, nombre_subdimension')
+        .in('nombre', nombresIndicadores);
+      
+      if (!definiciones || definiciones.length === 0) {
+        throw new Error('No se encontraron definiciones para los indicadores');
+      }
+      
+      // Obtener subdimensiones
+      const nombresSubdimensiones = Array.from(new Set(definiciones.map(d => d.nombre_subdimension).filter(Boolean)));
+      const { data: subdimensiones } = await supabase
+        .from('subdimensiones')
+        .select('nombre, nombre_dimension')
+        .in('nombre', nombresSubdimensiones);
+      
+      if (!subdimensiones || subdimensiones.length === 0) {
+        throw new Error('No se encontraron subdimensiones');
+      }
+      
+      // Obtener dimensiones
+      const nombresDimensiones = Array.from(new Set(subdimensiones.map(s => s.nombre_dimension).filter(Boolean)));
+      const { data: dimensiones } = await supabase
+        .from('dimensiones')
+        .select('nombre, peso')
+        .in('nombre', nombresDimensiones);
+      
+      if (!dimensiones || dimensiones.length === 0) {
+        throw new Error('No se encontraron dimensiones');
+      }
+      
+      // Crear mapas para acceso rápido
+      const mapIndicadorSubdim = new Map(definiciones.map(d => [d.nombre, d.nombre_subdimension]));
+      const mapIndicadorImportancia = new Map(definiciones.map(d => [d.nombre, d.importancia || "Baja"]));
+      const mapSubdimDim = new Map(subdimensiones.map(s => [s.nombre, s.nombre_dimension]));
+      const mapDimPeso = new Map(dimensiones.map(d => [d.nombre, d.peso || 0]));
+      
+      // 3. Procesar datos: agrupar por dimensión y subdimensión
+      type TreeStructure = {
+        [dimId: string]: {
+          [subdimId: string]: Array<{ val: number; w: number }>;
+        };
+      };
+      
+      const tree: TreeStructure = {};
+      const dimInfo: { [key: string]: { nombre: string; peso_pct: number } } = {};
+      
+      for (const row of resultados) {
+        const nombreIndicador = row.nombre_indicador;
+        if (!nombreIndicador) continue;
+        
+        const valor = parseFloat(String(row.valor_calculado || 0));
+        const importancia = mapIndicadorImportancia.get(nombreIndicador) || "Baja";
+        const peso = MAPA_IMPORTANCIA[importancia] || 1;
+        
+        const nombreSubdim = mapIndicadorSubdim.get(nombreIndicador);
+        if (!nombreSubdim) continue;
+        
+        const nombreDim = mapSubdimDim.get(nombreSubdim);
+        if (!nombreDim) continue;
+        
+        const dimPeso = mapDimPeso.get(nombreDim) || 0;
+        
+        if (!tree[nombreDim]) {
+          tree[nombreDim] = {};
+          dimInfo[nombreDim] = { nombre: nombreDim, peso_pct: dimPeso };
+        }
+        
+        if (!tree[nombreDim][nombreSubdim]) {
+          tree[nombreDim][nombreSubdim] = [];
+        }
+        
+        tree[nombreDim][nombreSubdim].push({ val: valor, w: peso });
+      }
+      
+      // 4. Calcular scores por dimensión (Nivel 1 y 2)
+      const scoresDimensiones: { [key: string]: number } = {};
+      
+      for (const [dimNombre, subdims] of Object.entries(tree)) {
+        const subdimVals: number[] = [];
+        
+        for (const [subdimNombre, inds] of Object.entries(subdims)) {
+          // Media ponderada por importancia (Nivel 1)
+          const num = inds.reduce((sum, i) => sum + i.val * i.w, 0);
+          const den = inds.reduce((sum, i) => sum + i.w, 0);
+          const subdimScore = den > 0 ? num / den : 0;
+          subdimVals.push(subdimScore);
+        }
+        
+        // Media aritmética de subdimensiones (Nivel 2)
+        scoresDimensiones[dimNombre] = subdimVals.length > 0
+          ? subdimVals.reduce((sum, val) => sum + val, 0) / subdimVals.length
+          : 0;
+      }
+      
+      // 5. Calcular score global (Nivel 3)
+      let brainnovaScore = 0;
+      const desglose: { [key: string]: number } = {};
+      
+      for (const [dimNombre, score] of Object.entries(scoresDimensiones)) {
+        const info = dimInfo[dimNombre];
+        if (!info) continue;
+        
+        const contrib = score * (info.peso_pct / 100.0);
+        brainnovaScore += contrib;
+        desglose[dimNombre] = Math.round(score * 100) / 100;
+      }
+      
+      return {
+        indice_ponderado: Math.round(brainnovaScore * 100) / 100,
+        desglose,
+        brainnova_global_score: Math.round(brainnovaScore * 100) / 100,
+        pais: data.pais,
+        periodo: data.periodo,
+        sector: data.sector,
+        tamano_empresa: data.tamano_empresa,
+        provincia: data.provincia
+      };
+    } catch (supabaseError) {
+      console.error('Error in Supabase fallback for Brainnova score:', supabaseError);
+      throw supabaseError instanceof Error 
+        ? supabaseError 
+        : new Error('No se pudo calcular el Brainnova score. Verifica que haya datos disponibles para los filtros seleccionados.');
+    }
   }
 };
 
